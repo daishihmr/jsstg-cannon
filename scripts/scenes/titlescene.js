@@ -10,6 +10,14 @@ tm.define("cannon.TitleScene", {
         });
     },
 
+    update: function(app) {
+        var kb = app.keyboard;
+        if (kb.getKey("up")) console.log("up");
+        if (kb.getKey("down")) console.log("down");
+        if (kb.getKey("left")) console.log("left");
+        if (kb.getKey("right")) console.log("right");
+    },
+
     onfinish: function() {
         tm.asset.Manager.get("sounds/extend").clone().play();
     }

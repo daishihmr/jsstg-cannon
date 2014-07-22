@@ -1,5 +1,5 @@
 tm.main(function() {
-    cannon.app = tm.display.CanvasApp("#main");
+    cannon.app = cannon.Application("#main");
     cannon.app
         .resize(cannon.SC_W, cannon.SC_H)
         .fitWindow()
@@ -14,4 +14,21 @@ tm.main(function() {
             nextScene: cannon.TitleScene,
         }))
         .run();
+});
+
+tm.define("cannon.Application", {
+    superClass: "tm.display.CanvasApp",
+
+    init: function(canvasId) {
+        this.superInit(canvasId);
+        this.keyboard.element.addEventListener("keydown", function(e){
+            switch (e.keyCode) {
+            case 38:
+            case 37:
+            case 39:
+            case 40:
+                e.preventDefault();
+            }
+        }, false);
+    }
 });

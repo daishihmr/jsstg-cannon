@@ -5,10 +5,34 @@
 </head>
 <body>
 
-<canvas id="main"></canvas>
+<iframe id="gf" src="main.html" style="width:640px;height:640px;background:black" scrolling="no" onload="this.contentWindow.focus()"></iframe>
+<div style="width:640px">
+    <div style="text-align:center">
+        <a id="fs" href="javascript:void(0)">Full Screen</a>
+    </div>
+</div>
 
-<script src="tmlib.js/build/tmlib.js"></script>
-<script src="build/cannon-stg.min.js"></script>
+<div style="height:4000px"></div>
+
+<script>
+window.onload = function() {
+    var gf = document.getElementById("gf");
+    document.addEventListener("click", function() {
+        gf.contentWindow.focus();
+        setTimeout(function() {
+            gf.contentWindow.focus();
+        }, 500);
+    }, false);
+
+    var fs = document.getElementById("fs");
+    fs.addEventListener("click", function() {
+        if (gf.requestFullScreen) gf.requestFullScreen();
+        else if (gf.webkitRequestFullScreen) gf.webkitRequestFullScreen();
+        else if (gf.mozRequestFullScreen) gf.mozRequestFullScreen();
+        else if (gf.msRequestFullScreen) gf.msRequestFullScreen();
+    }, false);
+};
+</script>
 
 </body>
 </html>
