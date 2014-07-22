@@ -1,0 +1,3 @@
+[submodule "tmlib.js"]
+	path = tmlib.js
+	url = https://github.com/daishihmr/tmlib.js.git
