@@ -1,25 +1,24 @@
 tm.define("cannon.TitleScene", {
-    superClass: "tm.scene.TitleScene",
+    superClass: "tm.app.Scene",
 
     init: function() {
-        this.superInit({
-            // title: "キャノンさん",
-            width: cannon.SC_W,
-            height: cannon.SC_H,
-            autopop: false,
-        });
+        this.superInit();
+        this.setInteractive(true);
     },
 
-    update: function(app) {
-        var kb = app.keyboard;
-        if (kb.getKey("up")) console.log("up");
-        if (kb.getKey("down")) console.log("down");
-        if (kb.getKey("left")) console.log("left");
-        if (kb.getKey("right")) console.log("right");
-    },
-
-    onfinish: function() {
-        tm.asset.Manager.get("sounds/extend").clone().play();
+    onpointingend: function() {
+        cannon.app.pushScene(
+            cannon.MenuDialog("MENU", [
+                "game start",
+                "option",
+            ],
+            [
+                "ゲームスタート",
+                "設定",
+            ]).on("selected", function(e) {
+                console.log(e);
+            })
+        );
     }
 
 });

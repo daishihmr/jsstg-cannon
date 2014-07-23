@@ -12,8 +12,26 @@ tm.main(function() {
                 // "sounds/extend": "sounds/se_maoudamashii_onepoint29.wav",
             },
             nextScene: cannon.TitleScene,
-        }))
-        .run();
+        }));
+
+    var tester = document.createElement("span");
+    tester.style.fontFamily = "'uni', 'monospace'";
+    tester.innerHTML = "QW@HhsXJ";
+    document.body.appendChild(tester);
+
+    var before = tester.offsetWidth;
+    var timeout = 10;
+
+    var checkLoadFont = function() {
+        timeout -= 1;
+        if (tester.offsetWidth !== before || timeout < 0) {
+            document.body.removeChild(tester);
+            cannon.app.run();
+        } else {
+            setTimeout(checkLoadFont, 100);
+        }
+    };
+    checkLoadFont();
 });
 
 tm.define("cannon.Application", {
