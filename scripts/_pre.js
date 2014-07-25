@@ -7,8 +7,18 @@ var cannon = {
     SC_H: 600,
 };
 
-cannon.playSe = function(soundName) {
-    tm.asset.Manager.get(soundName).clone().setVolume(0.5).play();
+cannon.optionSettings = {
+    seVolume: 0.5,
+    bgmVolume: 0.5,
 };
 
 tm.display.Label.default.fontFamily = "OFL";
+
+cannon.ASSETS = {
+    "fighter": "images/fighter.png",
+    "aura": "images/aura.png",
+    "bullet": "images/bullet.png",
+    "backfire": "images/backfire.png",
+
+    "sounds/extend": "sounds/extend.mp3",
+};

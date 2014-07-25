@@ -17,8 +17,8 @@ Parts:
 	weapon\weapon02.suf
 Light: (  100    0    0 ) ( 1.00 1.00 1.00)
 Info:
-	DisplayOffset: (  -7.248 230.000 -39.598 )
-	DisplayScale: 0.125000000000
+	DisplayOffset: ( -6017.004   0.000 675.000 )
+	DisplayScale: 2.828427124744
 	MeshFlag: 1
 	MeshSpacing: 200
 	ShowStatus: 1
@@ -29,16 +29,17 @@ Info:
 	SelectedOnly: 0
 	DispRelative: 0
 Palette:
-	0: atr black { col ( rgb ( 0.400 0.400 0.450 ) ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) }
-	1: atr gray { col ( 0.690 ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) }
-	2: atr red { col ( rgb ( 0.900 0.100 0.150 ) ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) }
-	3: atr white { col ( 1.000 ) amb ( 0.200 ) dif ( 0.800 ) ref ( 0.300 ) spc ( 0.900 1.000 0.650 ) }
+	0: atr black { col ( rgb ( 0.400 0.400 0.450 ) ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) opt ( castshadow receiveshadow ) }
+	1: atr gray { col ( 0.690 ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) opt ( castshadow receiveshadow ) }
+	2: atr red { col ( rgb ( 0.900 0.100 0.150 ) ) amb ( 0.200 ) dif ( 0.800 ) spc ( 0.700 1.000 0.000 ) opt ( castshadow receiveshadow ) }
+	3: atr shadow { col ( 0.000 ) amb ( 0.830 ) dif ( 0.000 ) spc ( 0.050 0.100 0.000 ) }
+	4: atr white { col ( 1.000 ) amb ( 0.200 ) dif ( 0.800 ) ref ( 0.300 ) spc ( 0.900 1.000 0.650 ) opt ( castshadow receiveshadow ) }
 */
 fram
 {
-	light pal( rgb ( 1.00 1.00 1.00 ) -3.00 -2.00 -4.00 )
-	{	mov ( 150 -6437.68 160 ) eye deg( 45 ) }
-	{	mov ( 150 -20.8911 160 ) target }
+	light pal( rgb ( 1.00 1.00 1.00 ) -21 -67 -70 )
+	{	mov ( 3719.29 1622.76 358.391 ) eye deg( 45 ) }
+	{	mov ( 264.446 -175.723 -154.386 ) target }
 	{	mov ( -386.274 0 189.372 ) rotz ( 0 ) roty ( 10 ) rotx ( -180 )
 		scal ( 1.7 1.86047 1.1561 ) obj robody13 /* "robody\robody13.suf" atr "red" */
 	}
@@ -57,7 +58,7 @@ fram
 	{	mov ( -214.96 -84.8528 237.146 ) rotz ( -20.1711 ) roty ( -63.1984 ) rotx ( 21.2297 )
 		scal ( 1.45753 -0.741748 2.24531 ) obj roetc04 /* "roetc\roetc04.suf" atr "white" */
 	}
-	{	mov ( 693.015 10 19.7737 ) rotz ( 0 ) roty ( 4.78692 ) rotx ( 0 )
+	{	mov ( 693.015 0 19.7737 ) rotz ( 0 ) roty ( 4.78692 ) rotx ( 0 )
 		scal ( 1.39048 1.73484 1.73484 ) obj CP09 /* "mecha\sfcockpit\CP09.suf" atr "white" */
 	}
 	{	mov ( -744.383 -337.604 217.707 ) rotz ( 3.69434 ) roty ( 5.49875 ) rotx ( 48.5898 )
@@ -104,5 +105,8 @@ fram
 	}
 	{	mov ( -744.383 337.604 217.707 ) rotz ( -3.69434 ) roty ( 5.49875 ) rotx ( -48.5898 )
 		scal ( 2.36941 -1.86285 1.7315 ) obj W115 /* "mecha\sfwing\W115.suf" atr "red" */
+	}
+	{	mov ( 2063.47 0 -258.005 ) rotz ( -90 ) roty ( 90 ) rotx ( -90 )
+		scal ( 0.136536 -0.136536 0.0724855 ) obj pillar13 /* "basic\pillar\pillar13.suf" atr "shadow" */
 	}
 }
