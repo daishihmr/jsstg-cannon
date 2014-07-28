@@ -6,10 +6,13 @@ tm.define("cannon.MenuDialog", {
             title: title,
             menu: menu,
             menuDesctiptions: descriptions,
-            defaultIndex: defaultIndex,
+            defaultIndex: defaultIndex || 0,
             showExit: true,
             screenWidth: cannon.SC_W,
             screenHeight: cannon.SC_H,
+            backgroundColor: "hsla(200, 80%, 5%, 0.9)",
+            boxColor: "hsla(200, 80%, 10%, 0.9)",
+            cursorColor: "hsla(200, 80%, 30%, 0.9)",
         });
 
         this.on("preselected", function() {

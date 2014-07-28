@@ -1,9 +1,13 @@
 var SOURCES = [
     "scripts/_pre.js",
     "scripts/main.js",
+    "scripts/sound.js",
     "scripts/scenes/titlescene.js",
     "scripts/scenes/gamescene.js",
     "scripts/scenes/menudialog.js",
+    "scripts/elements/fighter.js",
+    "scripts/elements/background.js",
+    "scripts/elements/shot.js",
 ];
 
 var BANNER = "/*\n\

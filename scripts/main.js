@@ -1,5 +1,6 @@
 tm.main(function() {
     cannon.app = cannon.Application("#main");
+    cannon.app.fps = 60;
     cannon.app
         .resize(cannon.SC_W, cannon.SC_H)
         .fitWindow()
@@ -7,7 +8,8 @@ tm.main(function() {
             width: cannon.SC_W,
             height: cannon.SC_H,
             assets: cannon.ASSETS,
-            nextScene: cannon.TitleScene,
+            // nextScene: cannon.TitleScene,
+            nextScene: cannon.GameScene,
         }));
 
     var tester = document.createElement("span");
