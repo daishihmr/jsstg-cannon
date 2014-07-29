@@ -31,6 +31,14 @@ tm.define("cannon.GameScene", {
                 terrainLayer: {
                     type: "tm.display.CanvasElement",
                     children: {
+                        ceil: {
+                            type: "cannon.Terrain",
+                            init: [CEIL],
+                        },
+                        floor: {
+                            type: "cannon.Terrain",
+                            init: [FLOOR],
+                        },
                     },
                 },
                 bulletLayer: {
@@ -40,5 +48,59 @@ tm.define("cannon.GameScene", {
                 },
             },
         });
-    }
+
+        this.player = this.playerLayer.player;
+    },
+
+    update: function(app) {
+        var player = this.player;
+
+        this.terrainLayer.children.forEach(function(t){
+            t.scroll += 1;
+        });
+
+        // terrain vs player
+        if (this.terrainLayer.children.some(function(t) {
+            return t.isHit(player);
+        })) {
+            player.damage();
+        }
+    },
 });
+
+var CEIL = [
+    0,
+    100,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    500,
+];
+var FLOOR = [
+    500,
+    600,
+    620,
+    490,
+    520,
+    520,
+    690,
+    620,
+    620,
+    690,
+    620,
+    620,
+    690,
+    620,
+    620,
+    700,
+];

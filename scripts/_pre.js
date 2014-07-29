@@ -4,10 +4,13 @@
 var cannon = {
     app: null,
 
-    SC_W: 900,
-    SC_H: 600,
+    SC_W: 960,
+    SC_H: 640,
 
-    SHOT_SPEED: 30,
+    FIGHTER_RADIUS: 20,
+
+    FIGHTER_SPEED: 12.0,
+    SHOT_SPEED: 40,
     HEAT_BY_SHOT: 15,
 
 };
@@ -24,6 +27,8 @@ cannon.ASSETS = {
     "aura": "images/aura.png",
     "shot": "images/shot.png",
     "backfire": "images/backfire.png",
+    "explode0": "images/exp_s.png",
+    "explode1": "images/exp_l.png",
 
     "sounds/extend": "sounds/extend.mp3",
 };

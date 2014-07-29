@@ -23,10 +23,11 @@ tm.define("cannon.Fighter", {
             },
         });
 
+        this.setBoundingType("circle");
+        this.radius = cannon.FIGHTER_RADIUS;
+
         this.beforeX = this.x = cannon.SC_W * 0.5;
         this.beforeY = this.y = cannon.SC_H * 0.5;
-
-        this.speed = 6.0;
 
         this.roll = 0;
         this.heat = 0;
@@ -41,7 +42,7 @@ tm.define("cannon.Fighter", {
         var kb = app.keyboard;
         var keyDirection = kb.getKeyDirection();
 
-        this.position.add(keyDirection.mul(this.speed));
+        this.position.add(keyDirection.mul(cannon.FIGHTER_SPEED));
         this.x = Math.clamp(this.x, 32, cannon.SC_W - 32);
         this.y = Math.clamp(this.y, 16, cannon.SC_H - 16);
 
@@ -64,7 +65,12 @@ tm.define("cannon.Fighter", {
                 .setPosition(this.x + 50, this.y + 10)
                 .addChildTo(this.parent);
             this.heat = cannon.HEAT_BY_SHOT;
+        } else if (this.heat > 0) {
+            this.heat -= 1;
         }
-        this.heat -= 1;
-    }
+    },
+
+    damage: function() {
+        console.log("damage!");
+    },
 });
