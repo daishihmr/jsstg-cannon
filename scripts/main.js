@@ -1,5 +1,9 @@
+tm.util.Script.loadStats();
+
 tm.main(function() {
+
     cannon.app = cannon.Application("#main");
+    cannon.app.enableStats();
     cannon.app.fps = 60;
     cannon.app
         .resize(cannon.SC_W, cannon.SC_H)

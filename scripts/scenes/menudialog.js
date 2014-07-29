@@ -16,12 +16,12 @@ tm.define("cannon.MenuDialog", {
         });
 
         this.on("preselected", function() {
-            cannon.playSe("sounds/extend");
+            cannon.playSe("extend");
         });
 
         this.on("canceled", function() {
             // TODO
-            cannon.playSe("sounds/extend");
+            cannon.playSe("extend");
         });
     }
 

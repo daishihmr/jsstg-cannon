@@ -14,6 +14,19 @@ tm.define("cannon.GameScene", {
                         },
                     },
                 },
+                terrainLayer: {
+                    type: "tm.display.CanvasElement",
+                    children: {
+                        ceil: {
+                            type: "cannon.Terrain",
+                            init: [CEIL],
+                        },
+                        floor: {
+                            type: "cannon.Terrain",
+                            init: [FLOOR],
+                        },
+                    },
+                },
                 playerLayer: {
                     type: "tm.display.CanvasElement",
                     children: {
@@ -26,19 +39,6 @@ tm.define("cannon.GameScene", {
                 enemyLayer: {
                     type: "tm.display.CanvasElement",
                     children: {
-                    },
-                },
-                terrainLayer: {
-                    type: "tm.display.CanvasElement",
-                    children: {
-                        ceil: {
-                            type: "cannon.Terrain",
-                            init: [CEIL],
-                        },
-                        floor: {
-                            type: "cannon.Terrain",
-                            init: [FLOOR],
-                        },
                     },
                 },
                 bulletLayer: {

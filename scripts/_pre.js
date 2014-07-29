@@ -29,8 +29,13 @@ cannon.ASSETS = {
     "backfire": "images/backfire.png",
     "explode0": "images/exp_s.png",
     "explode1": "images/exp_l.png",
+    "shockwave": "images/shockwave.png",
+    "spark": "images/spark.png",
 
     "sounds/extend": "sounds/extend.mp3",
+    "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",
+    "sounds/shot": "sounds/nc30638.mp3",
+
 };
 
 Math.PHI = 1.61803399;

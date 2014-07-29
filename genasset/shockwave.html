@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background:black">
+
+<canvas id="c"></canvas>
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+tm.main(function() {
+    var SIZE = 64;
+    var HS = SIZE * 0.5;
+    var COUNT = 8;
+
+    var c = tm.graphics.Canvas("#c");
+    c.resize(SIZE * COUNT, SIZE * COUNT);
+
+    var i = 0;
+    for (var y = 0; y < COUNT; y++) {
+        for (var x = 0; x < COUNT; x++) {
+            var sw = tm.graphics.Canvas().resize(SIZE, SIZE);
+
+            var r = Math.sqrt(i * 20);
+            var alpha = Math.pow(0.95, i);
+            sw.fillStyle = tm.graphics.RadialGradient(HS, HS, Math.max(0, r - 10), HS, HS, r)
+                .addColorStopList([
+                    { offset: 0.0, color: "rgba(0, 0, 0, 0)" },
+                    { offset: 1.0, color: "rgba(255, 255, 255, {0})".format(alpha) },
+                ])
+                .toStyle();
+            sw.fillCircle(HS,HS, r);
+
+            c.save();
+            c.translate(x * SIZE, y * SIZE);
+            c.drawImage(sw.canvas, 0, 0, SIZE, SIZE);
+
+            c.restore();
+            i++;
+        }
+    }
+
+    tm.dom.Element("#c").event.click(function() {
+        c.saveAsImage();
+    });
+
+});
+</script>
+</body>
+</html>

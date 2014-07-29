@@ -32,6 +32,8 @@ tm.define("cannon.Fighter", {
         this.roll = 0;
         this.heat = 0;
 
+        this.gunPosition = 0;
+
         this.aura.update = function(app) {
             this.setFrameIndex(app.frame % 4);
             this.scaleX = [0.8, 1.0, 1.2, 1.0][app.frame % 4];
@@ -58,15 +60,18 @@ tm.define("cannon.Fighter", {
         }
         this.roll = Math.clamp(this.roll, -2.0, 2.0);
 
-        this.body.setFrameIndex(~~(2 + this.roll + 0.5));
+        this.body.setFrameIndex(~~(2 + this.roll + 0.5) * 3 + ~~(this.gunPosition + 0.5));
 
         if (kb.getKeyDown("z") && this.heat <= 0) {
             cannon.Shot()
-                .setPosition(this.x + 50, this.y + 10)
+                .setPosition(this.x + 60, this.y + 7)
                 .addChildTo(this.parent);
             this.heat = cannon.HEAT_BY_SHOT;
+            this.gunPosition = 2;
         } else if (this.heat > 0) {
             this.heat -= 1;
+            this.gunPosition = Math.max(this.gunPosition - 0.2, 0);
+            if (this.heat <= 0) cannon.playSe("reload");
         }
     },
 
