@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background:black">
+
+<canvas id="c"></canvas>
+<canvas id="app"></canvas>
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+tm.main(function() {
+    var SIZE = 128;
+    var HS = SIZE * 0.5;
+    var COUNT = 5;
+
+    var c = tm.graphics.Canvas("#c");
+    c.resize(SIZE * COUNT, SIZE * COUNT);
+    c.globalCompositeOperation = "lighter";
+
+    var showParticle = function(dir, dis, pow) {
+        for (var i = 0; i < pow; i++) {
+            var r = (pow - i) * 0.1;
+
+            var x0 = SIZE * 0.9 + Math.cos(dir) * (dis - i);
+            var y0 = HS + Math.sin(dir) * (dis - i);
+            var g0 = tm.graphics.RadialGradient(x0, y0, 0, x0, y0, r)
+                .addColorStopList([
+                    { offset: 0.0, color: "hsla(220, 100%, 100%, 1.0)" },
+                    { offset: 1.0, color: "hsla(220, 100%,  50%, 0.0)" },
+                ])
+                .toStyle();
+            c.fillStyle = g0;
+            c.fillCircle(x0, y0, r);
+
+            var x1 = SIZE * 0.9 + Math.cos(dir) * (dis + i);
+            var y1 = HS + Math.sin(dir) * (dis + i);
+            var g1 = tm.graphics.RadialGradient(x1, y1, 0, x1, y1, r)
+                .addColorStopList([
+                    { offset: 0.0, color: "hsla(220, 100%, 100%, 1.0)" },
+                    { offset: 1.0, color: "hsla(220, 100%,  50%, 0.0)" },
+                ])
+                .toStyle();
+            c.fillStyle = g1;
+            c.fillCircle(x1, y1, r);
+        }
+    };
+
+    var ps = Array.range(0, 20).map(function(){
+        return {
+            dir: Math.randf(Math.PI * 0.6, Math.PI * 1.4),
+            rnd: Math.randf(0.8, 1.2),
+        };
+    });
+
+    var i = 0;
+    var total = COUNT * COUNT;
+    for (var y = 0; y < COUNT; y++) {
+        for (var x = 0; x < COUNT; x++) {
+            c.save();
+            c.translate(x * SIZE, y * SIZE);
+
+            ps.forEach(function(p) {
+                showParticle(p.dir, i * 2.5 * p.rnd, Math.sin(Math.PI * i / total) * 20);
+            });
+
+            c.restore();
+            i++;
+        }
+    }
+
+    var app = tm.display.CanvasApp("#app").resize(SIZE, SIZE);
+    app.fps = 60;
+    app.run();
+    tm.display.Sprite(c, SIZE, SIZE).on("enterframe", function() {
+        this.frameIndex += 1;
+    }).setPosition(HS, HS).addChildTo(app.currentScene);
+
+    tm.dom.Element("#c").event.click(function() {
+        c.saveAsImage();
+    });
+
+});
+</script>
+</body>
+</html>

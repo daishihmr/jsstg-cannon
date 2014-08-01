@@ -3,7 +3,10 @@ tm.define("cannon.Shot", {
 
     init: function() {
         this.superInit("shot");
-        this.setScale(3.0);
+        this.setScale(5.0);
+
+        this.boundingType = "circle";
+        this.radius = 30;
 
         this.on("added", function() {
             cannon.playSe("shot");
@@ -15,10 +18,31 @@ tm.define("cannon.Shot", {
                 .setRotation(Math.rand(0, 360))
                 .setScale(2, 2)
                 .addChildTo(this.parent);
+            cannon.Spark2(this.x, this.y)
+                .setScale(2, 2)
+                .addChildTo(this.parent);
+        });
+
+        cannon.Shot.ACTIVES.push(this);
+        this.on("removed", function() {
+            cannon.Shot.ACTIVES.erase(this);
         });
     },
 
-    update: function() {
+    update: function(app) {
+        this.scaleY = 5.0 + app.frame % 2;
         this.x += cannon.SHOT_SPEED;
-    }
+    },
+
+    damage: function() {
+        cannon.ShockWave(this.x, this.y)
+            .setScale(2, 4)
+            .addChildTo(this.parent);
+        cannon.Spark2(this.x, this.y)
+            .setScale(2, 2)
+            .addChildTo(this.parent);
+        this.remove();
+    },
 });
+
+cannon.Shot.ACTIVES = [];

@@ -10,8 +10,8 @@ var cannon = {
     FIGHTER_RADIUS: 20,
 
     FIGHTER_SPEED: 12.0,
-    SHOT_SPEED: 40,
-    HEAT_BY_SHOT: 15,
+    SHOT_SPEED: 30,
+    HEAT_BY_SHOT: 25,
 
 };
 
@@ -31,6 +31,7 @@ cannon.ASSETS = {
     "explode1": "images/exp_l.png",
     "shockwave": "images/shockwave.png",
     "spark": "images/spark.png",
+    "spark2": "images/spark2.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",

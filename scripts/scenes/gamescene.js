@@ -54,17 +54,23 @@ tm.define("cannon.GameScene", {
 
     update: function(app) {
         var player = this.player;
+        var terrains = this.terrainLayer.children;
 
-        this.terrainLayer.children.forEach(function(t){
+        terrains.forEach(function(t){
             t.scroll += 1;
         });
 
         // terrain vs player
-        if (this.terrainLayer.children.some(function(t) {
-            return t.isHit(player);
-        })) {
+        if (terrains.some(function(t) { return t.isHit(player) })) {
             player.damage();
         }
+
+        // terrain vs shot
+        cannon.Shot.ACTIVES.forEach(function(shot) {
+            if (terrains.some(function(t) { return t.isHit(shot) })) {
+                shot.damage();
+            }
+        });
     },
 });
 
@@ -85,8 +91,40 @@ var CEIL = [
     120,
     120,
     500,
+    0,
+    100,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    90,
+    120,
+    120,
+    500,
 ];
 var FLOOR = [
+    500,
+    600,
+    620,
+    490,
+    520,
+    520,
+    690,
+    620,
+    620,
+    690,
+    620,
+    620,
+    690,
+    620,
+    620,
+    700,
     500,
     600,
     620,
