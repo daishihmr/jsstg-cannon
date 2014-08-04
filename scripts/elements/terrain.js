@@ -26,9 +26,13 @@ tm.define("cannon.Terrain", {
         context.beginPath();
         for (var i = 0, len = lines.length; i < len; i++) {
             var line = lines[i];
+            var a = line.a;
+            var b = line.b;
 
-            context.moveTo(line.a.x - scroll, line.a.y);
-            context.lineTo(line.b.x - scroll, line.b.y);
+            if (0 <= a.x - scroll && a.x - scroll < cannon.SC_W || 0 <= b.x - scroll && b.x - scroll < cannon.SC_W) {
+                context.moveTo(a.x - scroll, a.y);
+                context.lineTo(b.x - scroll, b.y);
+            }
         }
         context.stroke();
     },
@@ -40,10 +44,16 @@ tm.define("cannon.Terrain", {
             radius: target.radius,
         };
         var lines = this.lines;
+        var scroll = this.scroll;
         for (var i = 0, len = lines.length; i < len; i++) {
             var line = lines[i];
-            if (line.a.x < c.x - c.radius && c.x + c.radius < line.b.x && cannon.CollisionHelper.isHitCircleLine(c, line)) {
-                return true;
+            var a = line.a;
+            var b = line.b;
+
+            if (0 <= a.x - scroll && a.x - scroll < cannon.SC_W || 0 <= b.x - scroll && b.x - scroll < cannon.SC_W) {
+                if (cannon.CollisionHelper.isHitCircleLine(c, line)) {
+                    return true;
+                }
             }
         }
         return false;

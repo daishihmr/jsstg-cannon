@@ -1,9 +1,6 @@
-tm.util.Script.loadStats();
-
 tm.main(function() {
 
     cannon.app = cannon.Application("#main");
-    cannon.app.enableStats();
     cannon.app.fps = 60;
     cannon.app
         .resize(cannon.SC_W, cannon.SC_H)
@@ -12,9 +9,17 @@ tm.main(function() {
             width: cannon.SC_W,
             height: cannon.SC_H,
             assets: cannon.ASSETS,
-            // nextScene: cannon.TitleScene,
-            nextScene: cannon.GameScene,
+
+            // TODO
+            // nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
+            nextScene: cannon.onAssetsLoaded(cannon.GameScene),
         }));
+
+    if (location.hostname === "localhost") {
+        tm.util.Script.loadStats().onload = function() {
+            cannon.app.enableStats();
+        };
+    }
 
     var tester = document.createElement("span");
     tester.style.fontFamily = "'OFL', 'monospace'";
@@ -34,15 +39,4 @@ tm.main(function() {
         }
     };
     checkLoadFont();
-});
-
-tm.define("cannon.Application", {
-    superClass: "tm.display.CanvasApp",
-
-    init: function(canvasId) {
-        this.superInit(canvasId);
-        this.keyboard.element.addEventListener("keydown", function(e){
-            if (37 <= e.keyCode && e.keyCode <= 40) e.preventDefault();
-        }, false);
-    }
 });
