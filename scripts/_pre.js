@@ -41,6 +41,7 @@ cannon.ASSETS = {
     "spark2": "images/spark2.png",
     "boost": "images/boost.png",
     "stage1": "genasset/stage1_half.png",
+    "test": "genasset/test.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background:black">
+
+<canvas id="app"></canvas>
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+tm.main(function() {
+    var noise = Noise.create();
+
+    var canvas = tm.graphics.Canvas("#app");
+    canvas.resize(Noise.SIZE, Noise.SIZE * 2);
+    for (var y = 0; y < Noise.SIZE; y++) {
+        var yr = Math.sin(Math.PI * (1 - y / Noise.SIZE) * 0.5);
+        for (var x = 0; x < Noise.SIZE; x++) {
+            var data = noise.get(x, y, 0);
+            var color = "hsl({h}, {l}%, {s}%)".format({
+                h: 23,
+                l: ~~(data*data * 100 * 0.6),
+                s: ~~(data*data * 100 * 0.4 * yr),
+            });
+            canvas.fillStyle = color;
+            canvas.fillRect(x, y, 1, 1);
+            canvas.fillRect(x, Noise.SIZE * 2 - y, 1, 1);
+        }
+    }
+});
+
+var Noise = {
+
+    SIZE: 256,
+
+    create: function() {
+        var layers = this._createLayers(this.SIZE);
+        var result = [];
+
+        for (var z = 0; z < this.SIZE; z++) {
+            result[z] = [];
+            for (var y = 0; y < this.SIZE; y++) {
+                result[z][y] = [];
+                for (var x = 0; x < this.SIZE; x++) {
+                    result[z][y][x] = 0;
+                }
+            }
+        }
+        var v = 0.5;
+        for (var i = 0; i < layers.length; i++) {
+            for (var z = 0; z < this.SIZE; z++) {
+                for (var y = 0; y < this.SIZE; y++) {
+                    for (var x = 0; x < this.SIZE; x++) {
+                        result[z][y][x] += layers[layers.length - i - 1].getValue(x, y, z) * v;
+                    }
+                }
+            }
+            v *= 0.5;
+        }
+
+        result.get = function(x, y, z) {
+            return this[z % Noise.SIZE][y % Noise.SIZE][x % Noise.SIZE];
+        };
+
+        return result;
+    },
+
+    _createLayers: function() {
+        var layers = [];
+        for (var div = 2; div < this.SIZE; div *= 2) {
+            layers.push(this._createLayer(div));
+        }
+        return layers;
+    },
+
+    _createLayer: function(div) {
+        var result = [];
+        for (var z = 0; z < this.SIZE/div; z++) {
+            result[z] = [];
+            for (var y = 0; y < this.SIZE/div; y++) {
+                result[z][y] = [];
+                for (var x = 0; x < this.SIZE/div; x++) {
+                    result[z][y][x] = Math.random();
+                }
+            }
+        }
+
+        result.div = div;
+
+        result._get = function(x, y, z) {
+            var xx = ~~(x/this.div);
+            var yy = ~~(y/this.div);
+            var zz = ~~(z/this.div);
+            return this[zz % (Noise.SIZE/this.div)][yy % (Noise.SIZE/this.div)][xx % (Noise.SIZE/this.div)];
+        };
+
+        result.getValue = function(x, y, z) {
+            var interpolate = function(a, b, ratio) {
+                var f = (1.0 - Math.cos(ratio * Math.PI)) * 0.5;
+                return a*(1-f) + b*f;
+            };
+
+            var xr = (x/this.div) - ~~(x/this.div);
+            var yr = (y/this.div) - ~~(y/this.div);
+            var zr = (z/this.div) - ~~(z/this.div);
+
+            var x0 = this._get(x, y, z);
+            var x1 = this._get(x+this.div, y, z);
+            var x2 = this._get(x, y+this.div, z);
+            var x3 = this._get(x+this.div, y+this.div, z);
+
+            var x4 = this._get(x, y, z+this.div);
+            var x5 = this._get(x+this.div, y, z+this.div);
+            var x6 = this._get(x, y+this.div, z+this.div);
+            var x7 = this._get(x+this.div, y+this.div, z+this.div);
+
+            var xi0 = interpolate(x0, x1, xr);
+            var xi1 = interpolate(x2, x3, xr);
+            var xi2 = interpolate(x4, x5, xr);
+            var xi3 = interpolate(x6, x7, xr);
+
+            var yi0 = interpolate(xi0, xi1, yr);
+            var yi1 = interpolate(xi2, xi3, yr);
+
+            return interpolate(yi0, yi1, zr);
+        };
+
+        return result;
+    },
+
+};
+</script>
+</body>
+</html>

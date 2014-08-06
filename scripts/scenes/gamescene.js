@@ -46,7 +46,7 @@ tm.define("cannon.GameScene", {
             },
         });
 
-        this.scrollSpeed = cannon.STAGE_DATA[cannon.currentStage].scrollSpeed;
+        this.scrollSpeed = cannon.STAGE_DATA[cannon.currentStage].terrain.scrollSpeed;
 
         this.player = this.playerLayer.player;
         this.launchPlayer();
@@ -56,11 +56,15 @@ tm.define("cannon.GameScene", {
         var that = this;
         var player = this.player;
         var terrains = this.terrainLayer.children;
+        var backgrounds = this.backgroundLayer.children;
         var shots;
         var enemies;
 
         terrains.forEach(function(t){
             t.scroll += that.scrollSpeed;
+        });
+        backgrounds.forEach(function(bg){
+            bg.scroll += that.scrollSpeed * 0.5;
         });
 
         // enemy vs shot
