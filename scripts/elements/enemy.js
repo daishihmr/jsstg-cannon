@@ -11,7 +11,7 @@ tm.define("cannon.Enemy", {
             .setBoundingType("circle")
             .setBlendMode("lighter");
         this.size = size;
-        this.radius = size * 0.2;
+        this.radius = size * 0.4;
 
         this.hp = 5;
 
@@ -67,21 +67,21 @@ tm.define("cannon.Enemy", {
 cannon.Enemy.ACTIVES = [];
 
 cannon.ENEMY_DATA.forEach(function(data, index) {
+
     tm.define("cannon.Enemy{0}".format(index), {
         superClass: "cannon.Enemy",
 
         init: function() {
-            this.superInit("enemy{0}".format(index), data.size);
+            this.superInit(data.texture, data.size);
             this.hp = data.hp;
             this.expType = data.expType;
-            this.rot = data.rotation;
-        },
 
-        onenterframe: function() {
-            this.x -= 2;
-            if (this.rot) {
-                this.rotation += 8;
+            if (data.rotation) {
+                this.on("enterframe", function() {
+                    this.rotation += 8;
+                });
             }
-        }
+        },
     });
+
 });

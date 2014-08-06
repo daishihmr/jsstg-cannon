@@ -14,15 +14,6 @@ tm.define("cannon.GameScene", {
                         },
                     },
                 },
-                terrainLayer: {
-                    type: "tm.display.CanvasElement",
-                    children: [
-                        {
-                            type: "cannon.Terrain",
-                            init: [cannon.STAGE_DATA[cannon.currentStage].terrain],
-                        },
-                    ],
-                },
                 playerLayer: {
                     type: "tm.display.CanvasElement",
                     children: {
@@ -32,6 +23,15 @@ tm.define("cannon.GameScene", {
                             controllable: false,
                         },
                     },
+                },
+                terrainLayer: {
+                    type: "tm.display.CanvasElement",
+                    children: [
+                        {
+                            type: "cannon.Terrain",
+                            init: [cannon.STAGE_DATA[cannon.currentStage].terrain],
+                        },
+                    ],
                 },
                 enemyLayer: {
                     type: "tm.display.CanvasElement",
@@ -46,18 +46,21 @@ tm.define("cannon.GameScene", {
             },
         });
 
+        this.scrollSpeed = cannon.STAGE_DATA[cannon.currentStage].scrollSpeed;
+
         this.player = this.playerLayer.player;
         this.launchPlayer();
     },
 
     update: function(app) {
+        var that = this;
         var player = this.player;
         var terrains = this.terrainLayer.children;
         var shots;
         var enemies;
 
         terrains.forEach(function(t){
-            t.scroll += 1;
+            t.scroll += that.scrollSpeed;
         });
 
         // enemy vs shot

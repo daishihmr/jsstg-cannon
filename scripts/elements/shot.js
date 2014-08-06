@@ -9,7 +9,7 @@ tm.define("cannon.Shot", {
         this.setScale(5.0 * this.direction, 5.0);
 
         this.boundingType = "circle";
-        this.radius = 30;
+        this.radius = cannon.SHOT_RADIUS;
 
         var that = this;
 

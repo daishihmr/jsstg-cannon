@@ -76,6 +76,14 @@ tm.define("MapEditer", {
             this.play = !this.play;
         }.bind(this));
         this.frameLabel = tm.dom.Element("#frame").fixed(100, 0);
+
+        var that = this;
+        tm.asset.Texture("stage1.png").on("load", function() {
+            tm.display.Sprite(this, 8000, 640)
+                .setOrigin(0, 0)
+                .setPosition(0, 400 - 640 / 2)
+                .addChildTo(that);
+        });
     },
 
     update: function(app) {
@@ -139,7 +147,7 @@ tm.define("Line", {
     },
 
     toJSON: function() {
-        return [this.x0, this.y0, this.x1, this.y1];
+        return [this.x0, this.y0 - (400 - 640 / 2), this.x1, this.y1 - (400 - 640 / 2)];
     },
 });
 </script>

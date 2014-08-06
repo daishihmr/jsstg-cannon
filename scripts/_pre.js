@@ -1,21 +1,26 @@
 /**
  * @namespace
  */
-var cannon = {
-    app: null,
+var cannon = {};
 
-    SC_W: 960,
-    SC_H: 640,
+(function() {
 
-    FIGHTER_RADIUS: 20,
+var SC_W = 960;
+var SC_H = 640;
 
-    FIGHTER_SPEED: 12.0,
-    SHOT_SPEED: 30,
-    HEAT_BY_SHOT: 25,
-    SHOT_POWER: 3,
+cannon.app = null;
 
-    currentStage: 0,
-};
+cannon.SC_W = SC_W;
+cannon.SC_H = SC_H;
+
+cannon.FIGHTER_RADIUS = SC_W / 96;
+cannon.FIGHTER_SPEED = SC_W / 120;
+cannon.SHOT_SPEED = SC_W / 32;
+cannon.HEAT_BY_SHOT = 25;
+cannon.SHOT_POWER = 3;
+cannon.SHOT_RADIUS = SC_W / 96;
+
+cannon.currentStage = 0;
 
 cannon.optionSettings = {
     seVolume: 0.1,
@@ -35,6 +40,7 @@ cannon.ASSETS = {
     "spark": "images/spark.png",
     "spark2": "images/spark2.png",
     "boost": "images/boost.png",
+    "stage1": "genasset/stage1_half.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",
@@ -48,3 +54,4 @@ Array.range(0, 14 + 1).forEach(function(i) {
 
 Math.PHI = 1.61803399;
 
+})();
