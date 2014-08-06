@@ -16,16 +16,12 @@ tm.define("cannon.GameScene", {
                 },
                 terrainLayer: {
                     type: "tm.display.CanvasElement",
-                    children: {
-                        ceil: {
+                    children: [
+                        {
                             type: "cannon.Terrain",
-                            init: [CEIL],
+                            init: [cannon.STAGE_DATA[cannon.currentStage].terrain],
                         },
-                        floor: {
-                            type: "cannon.Terrain",
-                            init: [FLOOR],
-                        },
-                    },
+                    ],
                 },
                 playerLayer: {
                     type: "tm.display.CanvasElement",
@@ -58,10 +54,36 @@ tm.define("cannon.GameScene", {
         var player = this.player;
         var terrains = this.terrainLayer.children;
         var shots;
+        var enemies;
 
         terrains.forEach(function(t){
             t.scroll += 1;
         });
+
+        // enemy vs shot
+        enemies = cannon.Enemy.ACTIVES.clone();
+        shots = cannon.Shot.ACTIVES.clone();
+        for (var i = 0, il = shots.length; i < il; i++) {
+            var shot = shots[i];
+            for (var j = 0, jl = enemies.length; j < jl; j++) {
+                var enemy = enemies[j];
+                if (shot.isHitElement(enemy)) {
+                    if (!enemy.damage(cannon.SHOT_POWER)) {
+                        shot.damage();
+                        break;
+                    }
+                }
+            }
+        }
+
+        // enemy vs player
+        enemies = cannon.Enemy.ACTIVES.clone();
+        for (var i = 0, l = enemies.length; i < l; i++) {
+            var enemy = enemies[i];
+            if (player.isHitElement(enemy)) {
+                player.damage();
+            }
+        }
 
         // terrain vs player
         if (terrains.some(function(t) { return t.isHit(player) })) {
@@ -77,28 +99,12 @@ tm.define("cannon.GameScene", {
             }
         }
 
-        // enemy vs shot
-        var enemies = cannon.Enemy.ACTIVES.clone();
-        shots = cannon.Shot.ACTIVES.clone();
-        for (var i = 0, il = shots.length; i < il; i++) {
-            var shot = shots[i];
-            for (var j = 0, jl = enemies.length; j < jl; j++) {
-                var enemy = enemies[j];
-                if (shot.isHitElement(enemy)) {
-                    if (!enemy.damage()) {
-                        shot.damage();
-                        break;
-                    }
-                }
-            }
-        }
-
         if (app.keyboard.getKeyDown("space")) {
             this.app.pushScene(cannon.PauseScene());
         }
 
         if (app.frame % 120 === 0) {
-            cannon.Enemy4().setPosition(cannon.SC_W * 1.1, cannon.SC_H * 0.5).addChildTo(this.enemyLayer);
+            cannon.Enemy12().setPosition(cannon.SC_W * 1.1, cannon.SC_H * 0.5).addChildTo(this.enemyLayer);
         }
     },
 
@@ -114,72 +120,3 @@ tm.define("cannon.GameScene", {
         });
     }
 });
-
-var CEIL = [
-    0,
-    100,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    500,
-    0,
-    100,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    90,
-    120,
-    120,
-    500,
-];
-var FLOOR = [
-    500,
-    600,
-    620,
-    490,
-    520,
-    520,
-    690,
-    620,
-    620,
-    690,
-    620,
-    620,
-    690,
-    620,
-    620,
-    700,
-    500,
-    600,
-    620,
-    490,
-    520,
-    520,
-    690,
-    620,
-    620,
-    690,
-    620,
-    620,
-    690,
-    620,
-    620,
-    700,
-];

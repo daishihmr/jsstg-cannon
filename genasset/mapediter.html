@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="margin:0">
+
+<input type="button" id="play" value="play" style="position: absolute">
+<div id="frame" style="color:white">0</div>
+
+<canvas id="app"></canvas>
+<div>
+    <input type="button" id="save" value="save">
+</div>
+<div>
+    <textarea id="out" style="width: 800px; height: 600px"></textarea>
+</div>
+
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+tm.main(function() {
+    app = tm.display.CanvasApp("#app").resize(8000, 800);
+    app.replaceScene(MapEditer());
+    app.run();
+});
+
+tm.define("MapEditer", {
+    superClass: "tm.app.Scene",
+
+    lines: null,
+    drag: false,
+    play: false,
+
+    init: function(data) {
+        this.superInit();
+        this.lines = [];
+
+        this.currentLine = DynamicLine().addChildTo(this);
+
+        Line(0, 400 - 640 / 2, 8000, 400 - 640 / 2, "gray").addChildTo(this);
+        Line(0, 400 + 640 / 2, 8000, 400 + 640 / 2, "gray").addChildTo(this);
+
+        this.setInteractive(true);
+
+        this.on("enterframe", function(e) {
+            if (!this.drag) return;
+            this.currentLine.endX = e.app.pointing.x;
+            this.currentLine.endY = e.app.pointing.y;
+        })
+        this.on("pointingend", function(e) {
+            var cl = this.currentLine;
+
+            if (!this.drag) {
+                this.drag = true;
+                cl.setVisible(true);
+                cl.startX = cl.endX = e.app.pointing.x;
+                cl.startY = cl.endY = e.app.pointing.y;
+            } else {
+                this.drag = false;
+                cl.setVisible(false);
+
+                this.lines.push(Line(cl.startX, cl.startY, cl.endX, cl.endY).addChildTo(this));
+
+                cl.startX = cl.endX = null;
+                cl.startY = cl.endY = null;
+            }
+        });
+
+        tm.dom.Element("#save").event.click(function() {
+            var data = JSON.stringify(this.lines);
+            tm.dom.Element("#out").text = data;
+        }.bind(this));
+        tm.dom.Element("#play").fixed(0, 0);
+        tm.dom.Element("#play").event.click(function() {
+            this.play = !this.play;
+        }.bind(this));
+        this.frameLabel = tm.dom.Element("#frame").fixed(100, 0);
+    },
+
+    update: function(app) {
+        var p = app.pointing;
+        var kb = app.keyboard;
+        if (kb.getKeyUp("backspace")) {
+            var l = this.lines.pop();
+            if(l) l.remove();
+        }
+
+        if (this.play) {
+            document.body.scrollLeft += 2;
+        }
+        this.frameLabel.text = document.body.scrollLeft;
+    }
+});
+
+tm.define("DynamicLine", {
+    superClass: "tm.display.CanvasElement",
+
+    startX: null,
+    startY: null,
+    endX: null,
+    endY: null,
+
+    init: function() {
+        this.superInit();
+        this.setOrigin(0, 0).setVisible(false);
+    },
+
+    draw: function(canvas) {
+        canvas.setStrokeStyle("aqua");
+        canvas.strokeLines(this.startX, this.startY, this.endX, this.endY);
+    }
+});
+
+tm.define("Line", {
+    superClass: "tm.display.Shape",
+
+    init: function(x0, y0, x1, y1, color) {
+        this.superInit(Math.abs(x0 - x1), Math.abs(y0 - y1));
+
+        if (x1 < x0) {
+            var xt = x1;x1 = x0;x0 = xt;
+            var yt = y1;y1 = y0;y0 = yt;
+        }
+
+        this.x0 = x0;
+        this.y0 = y0;
+        this.x1 = x1;
+        this.y1 = y1;
+
+        this.setOrigin(0, 0).setPosition(x0, Math.min(y0, y1));
+
+        var c = this.canvas;
+        c.strokeStyle = color || "white";
+        c.lineWidth = 1;
+        c.moveTo(0, Math.max(0, y0 - y1));
+        c.lineTo(x1 - x0, Math.max(0, y1 - y0));
+        c.stroke();
+    },
+
+    toJSON: function() {
+        return [this.x0, this.y0, this.x1, this.y1];
+    },
+});
+</script>
+
+</body>
+</html>

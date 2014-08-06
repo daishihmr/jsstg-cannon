@@ -19,3 +19,65 @@ tm.define("cannon.EffectSprite", {
         }
     }
 });
+
+tm.define("cannon.Explode", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("explode0", 128, 128, 64, 1);
+        this.setRotation(Math.rand(0, 360)).setScale(1.5).setPosition(x, y);
+    },
+
+    onadded: function() {
+        cannon.playSe("explode0");
+    }
+});
+
+tm.define("cannon.LargeExplode", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("explode1", 128, 128, 64, 1);
+        this.setRotation(Math.rand(0, 360)).setScale(2.5).setPosition(x, y);
+    },
+
+    onadded: function() {
+        cannon.playSe("explode1");
+    }
+});
+
+tm.define("cannon.ShockWave", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("shockwave", 64, 64, 64, 2);
+        this.setPosition(x, y);
+    }
+});
+
+tm.define("cannon.Spark", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("spark", 64, 64, 64, 2);
+        this.setPosition(x, y);
+    }
+});
+
+tm.define("cannon.Spark2", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y, frameIncr) {
+        this.superInit("spark2", 128, 128, 25, frameIncr || 1.5);
+        this.setOrigin(0.9, 0.5).setPosition(x, y);
+    }
+});
+
+tm.define("cannon.Boost", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("boost", 128, 128, 25, 1);
+        this.setPosition(x, y);
+    }
+});

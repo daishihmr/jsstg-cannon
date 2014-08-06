@@ -5,6 +5,8 @@ tm.define("cannon.Fighter", {
     controllable: false,
     muteki: false,
 
+    direction: 1,
+
     init: function() {
         this.superInit();
         this.fromJSON({
@@ -57,6 +59,8 @@ tm.define("cannon.Fighter", {
     },
 
     update: function(app) {
+        this.scaleX = this.direction;
+
         this.backfire.visible = this.backfire2.visible = !this.controllable;
         this.alpha = this.muteki ? ((app.frame % 4) * 0.25 + 0.25) : 1.0;
 
@@ -79,13 +83,28 @@ tm.define("cannon.Fighter", {
                 }
             }
 
-            if (kb.getKeyDown("z") && this.heat <= 0) {
-                cannon.Shot()
-                    .setPosition(this.x + 60, this.y + 7)
-                    .addChildTo(this.parent);
-                this.heat = cannon.HEAT_BY_SHOT;
-                this.gunPosition = 2;
-            } else if (this.heat > 0) {
+            var pushZ = kb.getKeyDown("z");
+            var pushX = kb.getKeyDown("x");
+
+            if (pushZ || pushX) {
+                this.direction = pushX ? 1 : -1;
+                if (this.heat <= 0) {
+                    cannon.Shot(this.direction)
+                        .setPosition(this.x + 60 * this.direction, this.y + 7)
+                        .addChildTo(this.parent);
+                    this.heat = cannon.HEAT_BY_SHOT;
+                    this.gunPosition = 2;
+                }
+
+                if (this.scaleX !== this.direction) {
+                    cannon.Boost(this.x, this.y)
+                        .setPosition(-100, 0)
+                        .setScale(2, 2)
+                        .addChildTo(this);
+                }
+            }
+
+            if (this.heat > 0) {
                 this.heat -= 1;
                 this.gunPosition = Math.max(this.gunPosition - 0.2, 0);
                 if (this.heat <= 0) cannon.playSe("reload");

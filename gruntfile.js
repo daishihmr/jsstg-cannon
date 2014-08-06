@@ -1,5 +1,7 @@
 var SOURCES = [
     "scripts/_pre.js",
+    "scripts/data/*",
+    "scripts/postload.js",
     "scripts/application.js",
     "scripts/sound.js",
     "scripts/scenes/*",

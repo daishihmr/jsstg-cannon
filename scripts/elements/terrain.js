@@ -7,8 +7,8 @@ tm.define("cannon.Terrain", {
         this.lines = [];
         for (var i = 0, len = data.length; i < len; i++) {
             this.lines.push({
-                a: tm.geom.Vector2(100 * i, data[i]),
-                b: tm.geom.Vector2(100 * (i + 1), data[i + 1]),
+                a: tm.geom.Vector2(data[i][0], data[i][1]),
+                b: tm.geom.Vector2(data[i][2], data[i][3]),
             });
         }
 
