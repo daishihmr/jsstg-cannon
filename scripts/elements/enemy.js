@@ -4,24 +4,71 @@ tm.define("cannon.Enemy", {
     muteki: 0,
     entered: false,
 
-    init: function(texture, size) {
-        this.superInit(texture, size * 2, size * 2);
+    init: function(data) {
+        this.superInit(data.texture, data.size * 2, data.size * 2);
         this
             .setFrameIndex(0)
             .setBoundingType("circle")
             .setBlendMode("lighter");
-        this.size = size;
-        this.radius = size * 0.4;
+        this.size = data.size;
+        this.radius = data.size * 0.5;
 
-        this.hp = 5;
+        this.hp = data.hp;
+        this.expType = data.expType;
+        this.age = 0;
+
+        if (data.rotation === "rotate") {
+            this.on("enterframe", function() {
+                this.rotation += 6;
+            });
+        } else if (data.rotation === "direction") {
+            var bx = 0;
+            var by = 0;
+            this.on("enterframe", function() {
+                this.rotation = Math.atan2(this.y - by, this.x - bx) * Math.RAD_TO_DEG;
+                bx = this.x;
+                by = this.y;
+            });
+        } else {
+            this.rotation = 0;
+            this.scaleX = -1;
+        }
 
         cannon.Enemy.ACTIVES.push(this);
         this.on("removed", function() {
             cannon.Enemy.ACTIVES.erase(this);
+            console.log("enemy removed");
         });
 
         this.on("added", function() {
             this.entered = false;
+            this.age = 0;
+        });
+    },
+
+    setRoute: function(route) {
+        this.setPosition(route[0].x, route[0].y);
+        var tweener = this.tweener.clear();
+        for (var i = 0, len = route.length; i < len; i++) {
+            tweener.to(route[i], 100);
+        }
+        return this;
+    },
+
+    setSineWaveMotion: function(data) {
+        this.setPosition(data.x, data.y);
+        var a = data.ia;
+        this.on("enterframe", function() {
+            a += data.va;
+            this.x += data.vx;
+            this.y = data.y + Math.sin(a) * data.r;
+        });
+    },
+
+    setHorizontalMotion: function(data) {
+        this.setPosition(data.x, data.y);
+        this.on("enterframe", function() {
+            this.x += data.vx;
         });
     },
 
@@ -36,6 +83,8 @@ tm.define("cannon.Enemy", {
         if (!this.inScreen() && this.entered) {
             this.remove();
         }
+
+        this.age += 1;
     },
 
     inScreen: function() {
@@ -65,23 +114,3 @@ tm.define("cannon.Enemy", {
 });
 
 cannon.Enemy.ACTIVES = [];
-
-cannon.ENEMY_DATA.forEach(function(data, index) {
-
-    tm.define("cannon.Enemy{0}".format(index), {
-        superClass: "cannon.Enemy",
-
-        init: function() {
-            this.superInit(data.texture, data.size);
-            this.hp = data.hp;
-            this.expType = data.expType;
-
-            if (data.rotation) {
-                this.on("enterframe", function() {
-                    this.rotation += 8;
-                });
-            }
-        },
-    });
-
-});

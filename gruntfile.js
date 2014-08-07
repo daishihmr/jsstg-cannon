@@ -1,6 +1,5 @@
 var SOURCES = [
     "scripts/_pre.js",
-    "scripts/data/*",
     "scripts/postload.js",
     "scripts/application.js",
     "scripts/sound.js",
@@ -8,6 +7,7 @@ var SOURCES = [
     "scripts/elements/*",
     "scripts/utils/*",
     "scripts/main.js",
+    "scripts/data/*",
 ];
 
 var BANNER = "/*\n\

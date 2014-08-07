@@ -4,21 +4,23 @@ tm.define("cannon.Background", {
     init: function() {
         this.superInit();
 
-        var s = 2;
-
         var that = this;
         Array.range(0, 3).forEach(function(index) {
-            tm.display.Sprite("test")
-                .setScale(s, 2)
-                .setPosition(160 * s * index, cannon.SC_H * 0.5)
-                .setAlpha(0.4)
+            var panel = tm.display.Sprite("test", cannon.SC_H, cannon.SC_H)
+                .setOrigin(0, 0)
+                .setPosition(cannon.SC_H * index, 0)
                 .addChildTo(that);
+            panel.index = index;
         });
 
         this.scroll = 0;
     },
 
     update: function() {
-        this.x = -this.scroll;
+        var scroll = this.scroll;
+        var width = cannon.SC_H;
+        this.children.forEach(function(panel) {
+            panel.x = -scroll % width + width * panel.index;
+        });
     }
 });

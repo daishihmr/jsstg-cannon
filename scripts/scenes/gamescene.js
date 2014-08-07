@@ -46,7 +46,9 @@ tm.define("cannon.GameScene", {
             },
         });
 
-        this.scrollSpeed = cannon.STAGE_DATA[cannon.currentStage].terrain.scrollSpeed;
+        this.scrollSpeed = cannon.STAGE_DATA[cannon.currentStage].scrollSpeed;
+        this.stageStep = cannon.STAGE_DATA[cannon.currentStage].stageStep;
+        this.waitCount = 0;
 
         this.player = this.playerLayer.player;
         this.launchPlayer();
@@ -54,11 +56,8 @@ tm.define("cannon.GameScene", {
 
     update: function(app) {
         var that = this;
-        var player = this.player;
         var terrains = this.terrainLayer.children;
         var backgrounds = this.backgroundLayer.children;
-        var shots;
-        var enemies;
 
         terrains.forEach(function(t){
             t.scroll += that.scrollSpeed;
@@ -66,6 +65,49 @@ tm.define("cannon.GameScene", {
         backgrounds.forEach(function(bg){
             bg.scroll += that.scrollSpeed * 0.5;
         });
+
+        this.step();
+
+        this.testCollision();
+
+        if (app.keyboard.getKeyDown("space")) {
+            this.app.pushScene(cannon.PauseScene());
+        }
+    },
+
+    step: function() {
+        this.waitCount -= 1;
+        if (this.waitCount > 0) return;
+
+        var s = this.stageStep.shift();
+        if (s === undefined) return;
+        switch (s.type) {
+        case "wait":
+            this.waitCount = s.value;
+            break;
+        case "enemy":
+            var enemy = cannon.Enemy(cannon.ENEMY_DATA[s.enemyType]).addChildTo(this.enemyLayer);
+            switch (s.motionType) {
+            case "route":
+                enemy.setRoute(s.route);
+                break;
+            case "sine":
+                enemy.setSineWaveMotion(s.sine);
+                break;
+            case "horizontal":
+                enemy.setHorizontalMotion(s.data);
+                break;
+            }
+            break;
+        }
+    },
+
+    testCollision: function() {
+        var that = this;
+        var player = this.player;
+        var terrains = this.terrainLayer.children;
+        var shots;
+        var enemies;
 
         // enemy vs shot
         enemies = cannon.Enemy.ACTIVES.clone();
@@ -104,14 +146,6 @@ tm.define("cannon.GameScene", {
             if (terrains.some(function(t) { return t.isHit(shot) })) {
                 shot.damage();
             }
-        }
-
-        if (app.keyboard.getKeyDown("space")) {
-            this.app.pushScene(cannon.PauseScene());
-        }
-
-        if (app.frame % 120 === 0) {
-            cannon.Enemy12().setPosition(cannon.SC_W * 1.1, cannon.SC_H * 0.5).addChildTo(this.enemyLayer);
         }
     },
 
