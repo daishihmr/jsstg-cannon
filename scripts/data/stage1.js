@@ -2,16 +2,55 @@ cannon.STAGE_DATA = [];
 (function() {
 // 1面
 
-var wait = function(v){ return { type: "wait",value: v } };
+var wait = function(v){ return { type: "wait", value: v } };
 
-var enemy5 = function(y){ return { type: "enemy", enemyType: 5, motionType: "horizontal", data: { x:1060, y:y, vx:-1.4 } } };
+var enemy5 = function(y) {
+    return {
+        type: "enemy",
+        enemyType: 5,
+        motionType: "horizontal",
+        data: { x:1060, y:y, vx:-1.4 },
+    };
+};
 
-var enemy8_0 = { type: "enemy", enemyType: 8, motionType: "route", route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:270 },{ x:-200, y:270 }], 60), };
-var enemy8_1 = { type: "enemy", enemyType: 8, motionType: "route", route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:370 },{ x:-200, y:370 }], 60), };
-var enemy8_2 = { type: "enemy", enemyType: 8, motionType: "route", route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:315 },{ x:-200, y:315 }], 60), };
-var enemy8_3 = { type: "enemy", enemyType: 8, motionType: "route", route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:325 },{ x:-200, y:325 }], 60), };
+var enemy8_0 = {
+    type: "enemy",
+    attack: "simple{5}",
+    enemyType: 8,
+    motionType: "route",
+    route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:270 },{ x:-200, y:270 }], 60),
+};
+var enemy8_1 = {
+    type: "enemy",
+    attack: "simple{5}",
+    enemyType: 8,
+    motionType: "route",
+    route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:370 },{ x:-200, y:370 }], 60),
+};
+var enemy8_2 = {
+    type: "enemy",
+    attack: "simple{5}",
+    enemyType: 8,
+    motionType: "route",
+    route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:315 },{ x:-200, y:315 }], 60),
+};
+var enemy8_3 = {
+    type: "enemy",
+    attack: "simple{5}",
+    enemyType: 8,
+    motionType: "route",
+    route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:325 },{ x:-200, y:325 }], 60),
+};
 
-var enemy10 = function(x, y, i){ return { type: "enemy", enemyType: 10, motionType: "sine", sine: { x:x, y:y, vx:-2, ia:Math.PI*i, va:0.04, r:120 } } };
+var enemy10 = function(x, y, i) {
+    return {
+        type: "enemy",
+        attack: "simple{5}",
+        enemyType: 10,
+        motionType: "sine",
+        sine: { x:x, y:y, vx:-2, ia:Math.PI*i, va:0.04, r:120 }
+    };
+};
 
 cannon.STAGE_DATA[0] = {
     terrain: {

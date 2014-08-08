@@ -34,15 +34,13 @@ tm.define("cannon.Enemy", {
             this.scaleX = -1;
         }
 
-        cannon.Enemy.ACTIVES.push(this);
-        this.on("removed", function() {
-            cannon.Enemy.ACTIVES.erase(this);
-            console.log("enemy removed");
-        });
-
         this.on("added", function() {
+            cannon.Enemy.ACTIVES.push(this);
             this.entered = false;
             this.age = 0;
+        });
+        this.on("removed", function() {
+            cannon.Enemy.ACTIVES.erase(this);
         });
     },
 
@@ -109,6 +107,32 @@ tm.define("cannon.Enemy", {
             }
         }
         return false;
+    },
+
+    startAttack: function(root, config) {
+        config = (config || {}).$safe(bulletml.runner.DEFAULT_CONFIG);
+
+        var runner = root.createRunner(config);
+        runner.x = this.x;
+        runner.y = this.y;
+        var enterframeListener = function() {
+            runner.x = this.x;
+            runner.y = this.y;
+            runner.update();
+            this.setPosition(runner.x, runner.y);
+        };
+        enterframeListener.isDanmaku = true;
+        this.on("enterframe", enterframeListener);
+    },
+    stopAttack: function() {
+        if (this.hasEventListener("enterframe")) {
+            var copied = this._listeners["enterframe"].clone();
+            for (var i = 0; i < copied.length; i++) {
+                if (copied[i].isDanmaku) {
+                    this.off("enterframe", copied[i]);
+                }
+            }
+        }
     }
 
 });

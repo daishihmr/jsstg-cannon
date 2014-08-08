@@ -46,6 +46,19 @@ tm.define("cannon.LargeExplode", {
     }
 });
 
+tm.define("cannon.PlayerExplode", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("explodeBlue", 64, 64, 64, 1);
+        this.setRotation(Math.rand(0, 360)).setScale(2.5).setPosition(x, y);
+    },
+
+    onadded: function() {
+        cannon.playSe("explode1");
+    }
+});
+
 tm.define("cannon.ShockWave", {
     superClass: "cannon.EffectSprite",
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background:black">
+
+<canvas id="c"></canvas>
+<canvas id="app"></canvas>
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+tm.main(function() {
+    var SIZE = 16;
+    var HS = SIZE * 0.5;
+    var COUNT = 3;
+
+    var c = tm.graphics.Canvas("#c");
+    c.resize(SIZE * COUNT, SIZE);
+
+    for (var x = 0; x < COUNT; x++) {
+        c.save();
+        c.translate(x * SIZE, 0);
+
+        c.fillStyle = tm.graphics.RadialGradient(HS, HS, 0, HS, HS, HS)
+            .addColorStopList([
+                { offset: 0.0, color: "hsla({0}, 100%, 100%, 1.0)".format([0, 120, 240][x]) },
+                { offset: 0.4, color: "hsla({0}, 100%, 100%, 1.0)".format([0, 120, 240][x]) },
+                { offset: 1.0, color: "hsla({0}, 100%,  45%, 1.0)".format([0, 120, 240][x]) },
+            ])
+            .toStyle();
+        c.fillCircle(HS, HS, HS);
+
+        c.restore();
+    }
+
+    var app = tm.display.CanvasApp("#app").resize(SIZE, SIZE);
+    app.fps = 60;
+    app.run();
+    tm.display.Sprite(c, SIZE, SIZE).on("enterframe", function() {
+        this.frameIndex += 1;
+    }).setPosition(HS, HS).addChildTo(app.currentScene);
+
+    tm.dom.Element("#c").event.click(function() {
+        c.saveAsImage();
+    });
+
+});
+</script>
+</body>
+</html>

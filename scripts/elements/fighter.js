@@ -61,7 +61,6 @@ tm.define("cannon.Fighter", {
     update: function(app) {
         this.scaleX = this.direction;
 
-        this.backfire.visible = this.backfire2.visible = !this.controllable;
         this.alpha = this.muteki ? ((app.frame % 4) * 0.25 + 0.25) : 1.0;
 
         if (this.controllable) {
@@ -120,10 +119,23 @@ tm.define("cannon.Fighter", {
         this.body.setFrameIndex(~~(2 + this.roll + 0.5) * 3 + ~~(this.gunPosition + 0.5));
     },
 
+    boostOn: function() {
+        this.backfire.alpha = this.backfire2.alpha = 1.0;
+        this.backfire.visible = this.backfire2.visible = true;
+    },
+
+    boostOff: function() {
+        this.backfire.tweener.clear().fadeOut(300);
+        this.backfire2.tweener.clear().fadeOut(300).call(function() {
+            this.backfire.visible = this.backfire2.visible = false;
+        }.bind(this));
+    },
+
     damage: function() {
-        console.log("damage!");
-        if (!this.controllable || this.muteki) {
-            return;
+        if (this.controllable && !this.muteki) {
+            cannon.PlayerExplode(this.x, this.y).addChildTo(this.parent);
+            this.remove();
+            this.flare("killed");
         }
     },
 });

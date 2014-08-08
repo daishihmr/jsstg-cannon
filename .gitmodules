@@ -1,3 +1,6 @@
 [submodule "tmlib.js"]
 	path = tmlib.js
 	url = https://github.com/daishihmr/tmlib.js.git
+[submodule "bulletml.js"]
+	path = bulletml.js
+	url = https://github.com/daishihmr/bulletml.js.git

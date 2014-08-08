@@ -9,7 +9,7 @@ tm.define("cannon.TitleScene", {
             children: {
                 title: {
                     type: "tm.display.Label",
-                    init: ["ETA Boost", 72],
+                    init: ["Deep Striker", 72],
                     x: cannon.SC_W * 0.5,
                     y: cannon.SC_H * (1 - 1 / Math.PHI),
                 }

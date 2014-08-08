@@ -16,7 +16,7 @@ cannon.SC_H = SC_H;
 cannon.FIGHTER_RADIUS = SC_W / 96;
 cannon.FIGHTER_SPEED = SC_W / 120;
 cannon.SHOT_SPEED = SC_W / 32;
-cannon.HEAT_BY_SHOT = 25;
+cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
 cannon.SHOT_RADIUS = SC_W / 96;
 
@@ -36,12 +36,14 @@ cannon.ASSETS = {
     "backfire": "images/backfire.png",
     "explode0": "images/exp_s.png",
     "explode1": "images/exp_l.png",
+    "explodeBlue": "images/exp_blue.png",
     "shockwave": "images/shockwave.png",
     "spark": "images/spark.png",
     "spark2": "images/spark2.png",
     "boost": "images/boost.png",
     "stage1": "genasset/stage1_half.png",
     "test": "genasset/test.png",
+    "bullet": "images/bullet.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",
