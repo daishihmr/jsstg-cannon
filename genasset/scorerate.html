@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<style>
+@font-face {
+    font-family: 'OFL';
+    src: url(../fonts/Orbitron-Regular.ttf);
+}
+</style>
+</head>
+<body style="background:black">
+
+<div style="font-family:OFL;color:white">test</div>
+
+<canvas id="c"></canvas>
+<canvas id="app"></canvas>
+
+<script src="../tmlib.js/build/tmlib.js"></script>
+<script>
+setTimeout(function() {
+    var SIZE = 64;
+    var HS = SIZE * 0.5;
+    var COUNT = 5;
+
+    var c = tm.graphics.Canvas("#c");
+    c.resize(SIZE * COUNT, SIZE);
+
+    var r = [2, 4, 8, 16, 32];
+
+    for (var x = 0; x < COUNT; x++) {
+        c.save();
+        c.translate(x * SIZE, 0);
+
+        c.fillStyle = "hsl({0}, 80%, {1}%)".format(~~(360 * x / COUNT), ~~(50 + 50 * x / COUNT));
+        c.context.font = "{fontWeight} {fontSize}px {fontFamily}".format({
+            fontWeight: "",
+            fontSize: 16 + 8 * x / COUNT,
+            fontFamily: "OFL",
+        });
+        c.context.textAlign = "center";
+        c.context.textBaseline = "middle";
+        c.fillText("x" + r[x], HS, HS);
+
+        c.restore();
+    }
+
+    var app = tm.display.CanvasApp("#app").resize(SIZE, SIZE);
+    app.fps = 2;
+    app.run();
+    tm.display.Sprite(c, SIZE, SIZE).on("enterframe", function() {
+        this.frameIndex += 1;
+    }).setPosition(HS, HS).addChildTo(app.currentScene);
+
+    tm.dom.Element("#c").event.click(function() {
+        c.saveAsImage();
+    });
+}, 600);
+</script>
+</body>
+</html>

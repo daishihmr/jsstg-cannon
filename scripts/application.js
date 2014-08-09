@@ -8,9 +8,5 @@ tm.define("cannon.Application", {
         }, false);
 
         this.canvas.imageSmoothingEnabled = true;
-
-        cannon.Application.SINGLETON = this;
     }
 });
-
-cannon.Application.SINGLETON = null;

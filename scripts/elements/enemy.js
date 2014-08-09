@@ -1,8 +1,12 @@
 tm.define("cannon.Enemy", {
     superClass: "tm.display.Sprite",
 
+    score: 0,
+    hp: 0,
     muteki: 0,
     entered: false,
+    expType: 0,
+    age: 0,
 
     init: function(data) {
         this.superInit(data.texture, data.size * 2, data.size * 2);
@@ -13,6 +17,7 @@ tm.define("cannon.Enemy", {
         this.size = data.size;
         this.radius = data.size * 0.5;
 
+        this.score = data.score;
         this.hp = data.hp;
         this.expType = data.expType;
         this.age = 0;

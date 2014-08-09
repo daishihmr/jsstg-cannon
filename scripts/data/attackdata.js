@@ -40,5 +40,18 @@ for (var i = 0; i < 5; i++) {
     });
 }
 
+cannon.ATTACK_DATA["horizontal2"] = new bulletml.Root({
+    "top": action([
+        repeat(999, [
+            interval(130),
+            repeat(6, [
+                fire(direction( -90, "absolute"), spd(1.5), bullet({color: 1}), offsetY(-20)),
+                fire(direction( -90, "absolute"), spd(1.5), bullet({color: 1}), offsetY(+20)),
+                wait(3),
+            ]),
+        ]),
+    ]),
+});
+
 })();
 

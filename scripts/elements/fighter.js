@@ -136,6 +136,9 @@ tm.define("cannon.Fighter", {
             cannon.PlayerExplode(this.x, this.y).addChildTo(this.parent);
             this.remove();
             this.flare("killed");
+            return true;
         }
+
+        return false;
     },
 });

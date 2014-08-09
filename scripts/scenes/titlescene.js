@@ -14,10 +14,20 @@ tm.define("cannon.TitleScene", {
                     y: cannon.SC_H * (1 - 1 / Math.PHI),
                 }
             }
-        })
+        });
+
+        this.on("pointingend", function() {
+            this.openMenu();
+        });
     },
 
-    onpointingend: function() {
+    update: function(app) {
+        if (app.keyboard.getKeyUp("z") || app.keyboard.getKeyUp("x") || app.keyboard.getKeyUp("space")) {
+            this.openMenu();
+        }
+    },
+
+    openMenu: function() {
         var that = this;
         cannon.app.pushScene(
             cannon.MenuDialog("MENU", ["game start", "option"], ["ゲームスタート","設定"]).on("selected", function(e) {
@@ -31,7 +41,7 @@ tm.define("cannon.TitleScene", {
     },
 
     startGame: function() {
-        cannon.app.replaceScene(cannon.GameScene());
+        cannon.app.replaceScene(cannon.GameScene.createLoadingScene(0));
     },
 
 });

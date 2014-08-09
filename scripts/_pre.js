@@ -14,13 +14,12 @@ cannon.SC_W = SC_W;
 cannon.SC_H = SC_H;
 
 cannon.FIGHTER_RADIUS = SC_W / 96;
-cannon.FIGHTER_SPEED = SC_W / 120;
+cannon.FIGHTER_SPEED = SC_W / 100;
 cannon.SHOT_SPEED = SC_W / 32;
 cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
 cannon.SHOT_RADIUS = SC_W / 96;
-
-cannon.currentStage = 0;
+cannon.ZANKI_MAX = 10;
 
 cannon.optionSettings = {
     seVolume: 0.1,
@@ -41,9 +40,8 @@ cannon.ASSETS = {
     "spark": "images/spark.png",
     "spark2": "images/spark2.png",
     "boost": "images/boost.png",
-    "stage1": "genasset/stage1_half.png",
-    "test": "genasset/test.png",
     "bullet": "images/bullet.png",
+    "scorerate": "images/scorerate.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",

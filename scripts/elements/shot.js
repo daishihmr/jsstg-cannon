@@ -2,6 +2,7 @@ tm.define("cannon.Shot", {
     superClass: "tm.display.Sprite",
 
     direction: 1,
+    killCount: 0,
 
     init: function(direction) {
         this.superInit("shot");
@@ -28,7 +29,9 @@ tm.define("cannon.Shot", {
                 .addChildTo(this.parent);
         });
 
-        cannon.Shot.ACTIVES.push(this);
+        this.on("added", function() {
+            cannon.Shot.ACTIVES.push(this);
+        });
         this.on("removed", function() {
             cannon.Shot.ACTIVES.erase(this);
         });
@@ -41,6 +44,13 @@ tm.define("cannon.Shot", {
         if (this.x < 0 - this.radius || cannon.SC_W + this.radius < this.x) {
             this.remove();
         }
+    },
+
+    killEnemy: function(enemy, addTarget) {
+        if (this.killCount > 0) {
+            cannon.ScoreRate(Math.min(this.killCount - 1, 4), enemy.x, enemy.y).addChildTo(addTarget);
+        }
+        this.killCount += 1;
     },
 
     damage: function() {

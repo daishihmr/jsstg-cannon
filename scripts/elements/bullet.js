@@ -3,6 +3,7 @@ tm.define("cannon.Bullet", {
 
     init: function(runner, spec) {
         this.superInit("bullet", 16, 16);
+        this.setScale(2.0, 0.5);
         this.setFrameIndex(spec.color || 0);
 
         this.setBoundingType("circle");
@@ -14,6 +15,14 @@ tm.define("cannon.Bullet", {
         this.runner.onVanish = function() {
             if (this.parent) this.remove();
         }.bind(this);
+
+        var bx = 0;
+        var by = 0;
+        this.on("enterframe", function() {
+            this.rotation = Math.atan2(this.y - by, this.x - bx) * Math.RAD_TO_DEG;
+            bx = this.x;
+            by = this.y;
+        });
 
         this.on("added", function() {
             cannon.Bullet.ACTIVES.push(this);

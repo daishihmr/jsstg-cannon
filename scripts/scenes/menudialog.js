@@ -13,6 +13,8 @@ tm.define("cannon.MenuDialog", {
             backgroundColor: "hsla(200, 80%, 5%, 0.9)",
             boxColor: "hsla(200, 80%, 10%, 0.9)",
             cursorColor: "hsla(200, 80%, 30%, 0.9)",
+            okKey: "z",
+            cancelKey: "x",
         });
 
         this.on("preselected", function() {

@@ -5,14 +5,11 @@ tm.main(function() {
     cannon.app
         .resize(cannon.SC_W, cannon.SC_H)
         .fitWindow()
-        .replaceScene(tm.ui.LoadingScene({
+        .replaceScene(cannon.LoadingScene({
             width: cannon.SC_W,
             height: cannon.SC_H,
             assets: cannon.ASSETS,
-
-            // TODO
-            // nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
-            nextScene: cannon.onAssetsLoaded(cannon.GameScene),
+            nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
         }));
 
     if (location.hostname === "localhost") {
