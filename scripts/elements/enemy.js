@@ -49,11 +49,11 @@ tm.define("cannon.Enemy", {
         });
     },
 
-    setRoute: function(route) {
-        this.setPosition(route[0].x, route[0].y);
+    setRoute: function(data) {
+        this.setPosition(data[0].x, data[0].y);
         var tweener = this.tweener.clear();
-        for (var i = 0, len = route.length; i < len; i++) {
-            tweener.to(route[i], 100);
+        for (var i = 0, len = data.length; i < len; i++) {
+            tweener.to(data[i], 100);
         }
         return this;
     },
@@ -72,6 +72,19 @@ tm.define("cannon.Enemy", {
         this.setPosition(data.x, data.y);
         this.on("enterframe", function() {
             this.x += data.vx;
+        });
+    },
+
+    setHomingMotion: function(data, player) {
+        this.setPosition(data.x, data.y);
+        this.velocity = tm.geom.Vector2().setAngle(data.initialDirection, 1);
+        this.on("enterframe", function() {
+            if (this.age < 500 && this.age % 100 < 20 && this.age % 2 === 0) {
+                this.velocity
+                    .add(tm.geom.Vector2(player.x - this.x, player.y - this.y).mul(data.homing))
+                    .normalize();
+            }
+            this.position.add(tm.geom.Vector2.mul(this.velocity, data.speed));
         });
     },
 

@@ -4,6 +4,16 @@ cannon.STAGE_DATA = [];
 
 var wait = function(v){ return { type: "wait", value: v } };
 
+var enemy3 = function(x, y, initialDirection) {
+    return {
+        type: "enemy",
+        attack: "simple{5}",
+        enemyType: 3,
+        motionType: "homing",
+        data: { x: x, y: y, initialDirection: initialDirection, speed: 3, homing: 0.001 },
+    };
+};
+
 var enemy5 = function(y) {
     return {
         type: "enemy",
@@ -14,33 +24,54 @@ var enemy5 = function(y) {
     };
 };
 
-var enemy8_0 = {
-    type: "enemy",
-    attack: "simple{5}",
-    enemyType: 8,
-    motionType: "route",
-    route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:270 },{ x:-200, y:270 }], 60),
+var enemy7 = function(v) {
+    var route;
+    switch (v) {
+    case 0:
+        route = cannon.spline([{ x:320, y:-100 },{ x:100, y:320 },{ x:320, y:540 },{ x:760, y:540 }, {x:860, y:320}, {x:480, y:320}, {x:-100, y:320}], 100);
+        break;
+    case 1:
+        route = cannon.spline([{ x:640, y:-100 },{ x:860, y:320 },{ x:640, y:540 },{ x:200, y:540 }, {x:100, y:320}, {x:480, y:320}, {x:1060, y:320}], 100);
+        break;
+    }
+    return {
+        type: "enemy",
+        attack: "simple{5}",
+        enemyType: 7,
+        motionType: "route",
+        data: route,
+    };
 };
-var enemy8_1 = {
-    type: "enemy",
-    attack: "simple{5}",
-    enemyType: 8,
-    motionType: "route",
-    route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:370 },{ x:-200, y:370 }], 60),
-};
-var enemy8_2 = {
-    type: "enemy",
-    attack: "simple{5}",
-    enemyType: 8,
-    motionType: "route",
-    route: cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:315 },{ x:-200, y:315 }], 60),
-};
-var enemy8_3 = {
-    type: "enemy",
-    attack: "simple{5}",
-    enemyType: 8,
-    motionType: "route",
-    route: cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:325 },{ x:-200, y:325 }], 60),
+
+var enemy8 = function(v) {
+    var route;
+    switch (v) {
+    case 0:
+        route = cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:270 },{ x:-200, y:270 }], 60);
+        break;
+    case 1:
+        route = cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:370 },{ x:-200, y:370 }], 60);
+        break;
+    case 2:
+        route = cannon.spline([{ x:900, y:-100 },{ x:900, y:600 },{ x:600, y:315 },{ x:-200, y:315 }], 60);
+        break;
+    case 3:
+        route = cannon.spline([{ x:900, y:760 },{ x:900, y:40 },{ x:600, y:325 },{ x:-200, y:325 }], 60);
+        break;
+    case 4:
+        route = cannon.spline([{ x:60, y:-100 },{ x:60, y:600 },{ x:360, y:270 },{ x:1160, y:270 }], 60);
+        break;
+    case 5:
+        route = cannon.spline([{ x:60, y:760 },{ x:60, y:40 },{ x:360, y:370 },{ x:1160, y:370 }], 60);
+        break;
+    }
+    return {
+        type: "enemy",
+        attack: "simple{5}",
+        enemyType: 8,
+        motionType: "route",
+        data: route,
+    };
 };
 
 var enemy10 = function(x, y, i) {
@@ -49,7 +80,7 @@ var enemy10 = function(x, y, i) {
         attack: "simple{5}",
         enemyType: 10,
         motionType: "sine",
-        sine: { x:x, y:y, vx:-2, ia:Math.PI*i, va:0.04, r:120 }
+        data: { x:x, y:y, vx:-2, ia:Math.PI*i, va:0.04, r:120 }
     };
 };
 
@@ -67,64 +98,64 @@ cannon.STAGE_DATA[0] = {
         wait(100),
 
         wait(100),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
 
         wait(150),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
 
         wait(150),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
         wait(10),
-        enemy8_0,
+        enemy8(0),
 
         wait(150),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
         wait(10),
-        enemy8_1,
+        enemy8(1),
 
         wait(250),
-        enemy8_2,
-        enemy8_3,
+        enemy8(2),
+        enemy8(3),
         wait(10),
-        enemy8_2,
-        enemy8_3,
+        enemy8(2),
+        enemy8(3),
         wait(10),
-        enemy8_2,
-        enemy8_3,
+        enemy8(2),
+        enemy8(3),
         wait(10),
-        enemy8_2,
-        enemy8_3,
+        enemy8(2),
+        enemy8(3),
         wait(10),
-        enemy8_2,
-        enemy8_3,
+        enemy8(2),
+        enemy8(3),
 
         wait(200),
         enemy10(1060, 270, 0),
@@ -147,6 +178,111 @@ cannon.STAGE_DATA[0] = {
         enemy5(260),
         wait(80),
         enemy5(240),
+
+        wait(250),
+        enemy3(-100, 128,  90),
+        enemy3(-100, 256,  90),
+        enemy3(-100, 384,  90),
+        enemy3(-100, 512,  90),
+
+        wait(150),
+        enemy8(1),
+        wait(10),
+        enemy8(1),
+        wait(10),
+        enemy8(1),
+        wait(10),
+        enemy8(1),
+        wait(10),
+        enemy8(1),
+
+        wait(150),
+        enemy8(4),
+        wait(10),
+        enemy8(4),
+        wait(10),
+        enemy8(4),
+        wait(10),
+        enemy8(4),
+        wait(10),
+        enemy8(4),
+
+        wait(150),
+        enemy8(5),
+        wait(10),
+        enemy8(5),
+        wait(10),
+        enemy8(5),
+        wait(10),
+        enemy8(5),
+        wait(10),
+        enemy8(5),
+
+        wait(250),
+        enemy3(-100, 128,  90),
+        enemy3(-100, 256,  90),
+        enemy3(-100, 384,  90),
+        enemy3(-100, 512,  90),
+        enemy3(1060, 128, -90),
+        enemy3(1060, 256, -90),
+        enemy3(1060, 384, -90),
+        enemy3(1060, 512, -90),
+
+        wait(150),
+        enemy7(1),
+        wait(15),
+        enemy7(1),
+        wait(15),
+        enemy7(1),
+        wait(15),
+        enemy7(1),
+        wait(15),
+        enemy7(1),
+        wait(15),
+
+        wait(150),
+        enemy7(0),
+        wait(15),
+        enemy7(0),
+        wait(15),
+        enemy7(0),
+        wait(15),
+        enemy7(0),
+        wait(15),
+        enemy7(0),
+        wait(15),
+
+        wait(250),
+        enemy8(0),
+        enemy8(5),
+        wait(10),
+        enemy8(0),
+        enemy8(5),
+        wait(10),
+        enemy8(0),
+        enemy8(5),
+        wait(10),
+        enemy8(0),
+        enemy8(5),
+        wait(10),
+        enemy8(0),
+        enemy8(5),
+
+        wait(250),
+        enemy8(1),
+        enemy8(4),
+        wait(10),
+        enemy8(1),
+        enemy8(4),
+        wait(10),
+        enemy8(1),
+        enemy8(4),
+        wait(10),
+        enemy8(1),
+        enemy8(4),
+        wait(10),
+        enemy8(1),
+        enemy8(4),
     ],
 };
 

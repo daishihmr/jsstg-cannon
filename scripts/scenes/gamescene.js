@@ -1,6 +1,7 @@
 (function() {
 
 var score = 0;
+var rank = 0;
 var zanki = 3;
 
 tm.define("cannon.GameScene", {
@@ -54,10 +55,15 @@ tm.define("cannon.GameScene", {
                             x: cannon.SC_W - 5,
                             y: 5,
                         },
+                        rankLabel: {
+                            type: "cannon.RankLabel",
+                            x: 5,
+                            y: 5,
+                        },
                         zankiLabel: {
                             type: "cannon.ZankiLabel",
                             x: 32 + 5,
-                            y: 32 + 5,
+                            y: cannon.SC_H - 32 - 5,
                         }
                     }
                 },
@@ -67,6 +73,8 @@ tm.define("cannon.GameScene", {
         var that = this;
 
         this.uiLayer.zankiLabel.setZanki(zanki);
+        this.uiLayer.scoreLabel.set(score);
+        this.uiLayer.rankLabel.set(rank);
 
         this.mt = new MersenneTwister(1000 + this.stageIndex);
 
@@ -81,13 +89,18 @@ tm.define("cannon.GameScene", {
                 that.gameover();
                 return;
             }
+
+            rank = Math.clamp(rank - 30, 0, 1000);
+            bulletml.Walker.globalScope["$rank"] = rank * 0.001;
+            that.uiLayer.rankLabel.add(-30);
+
             that.uiLayer.zankiLabel.setZanki(zanki);
             that.tweener.clear().wait(500).call(function() {
                 that.launchPlayer();
             });
         });
 
-        bulletml.Walker.globalScope["$rank"] = 0.00;
+        bulletml.Walker.globalScope["$rank"] = rank * 0.001;
         this.bulletmlConfig = {
             target: this.player,
             createNewBullet: function(runner, spec) {
@@ -140,13 +153,16 @@ tm.define("cannon.GameScene", {
         var enemy = cannon.Enemy(cannon.ENEMY_DATA[step.enemyType]).addChildTo(this.enemyLayer);
         switch (step.motionType) {
         case "route":
-            enemy.setRoute(step.route);
+            enemy.setRoute(step.data);
             break;
         case "sine":
-            enemy.setSineWaveMotion(step.sine);
+            enemy.setSineWaveMotion(step.data);
             break;
         case "horizontal":
             enemy.setHorizontalMotion(step.data);
+            break;
+        case "homing":
+            enemy.setHomingMotion(step.data, this.player);
             break;
         }
 
@@ -182,10 +198,16 @@ tm.define("cannon.GameScene", {
                         shot.damage();
                         break;
                     } else {
-                        var delta = [1, 2, 4, 8, 16, 32][Math.min(shot.killCount, 5)] * enemy.score;
+                        var rate = Math.min(shot.killCount, 5);
+
+                        var delta = [1, 2, 4, 8, 16, 32][rate] * enemy.score;
                         score += delta;
                         this.uiLayer.scoreLabel.add(delta);
                         shot.killEnemy(enemy, this.uiLayer);
+
+                        rank = Math.clamp(rank + rate, 0, 1000);
+                        bulletml.Walker.globalScope["$rank"] = rank * 0.001;
+                        this.uiLayer.rankLabel.add(rate);
                     }
                 }
             }

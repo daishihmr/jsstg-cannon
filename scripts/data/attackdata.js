@@ -26,7 +26,7 @@ var offsetY = bulletml.dsl.offsetY;
 var autonomy = bulletml.dsl.autonomy;
 
 var spd = function(v){ return speed("{0} * 5 * (1 + Math.sqrt($rank) * 2)".format(v)) };
-var interval = function(v){ return wait("{0} / (1 + Math.sqrt($rank) * 2)".format(v)) };
+var interval = function(v){ return wait("{0} / (1 + Math.sqrt($rank))".format(v)) };
 
 for (var i = 0; i < 5; i++) {
     cannon.ATTACK_DATA["simple{0}".format(i)] = new bulletml.Root({
