@@ -14,7 +14,7 @@ tm.define("cannon.RankLabel", {
     },
 
     add: function(delta) {
-        this.rank = Math.clamp(this.rank + delta, 0, 1000);
+        this.rank = Math.clamp(this.rank + delta, 0, cannon.RANK_MAX);
         this.tweener.clear().to({
             showing: this.rank
         }, 500);

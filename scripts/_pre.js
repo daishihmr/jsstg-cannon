@@ -20,6 +20,7 @@ cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
 cannon.SHOT_RADIUS = SC_W / 64;
 cannon.ZANKI_MAX = 10;
+cannon.RANK_MAX = 3000;
 
 cannon.optionSettings = {
     seVolume: 0.1,

@@ -90,7 +90,7 @@ tm.define("cannon.GameScene", {
                 return;
             }
 
-            rank = Math.clamp(rank - 30, 0, 1000);
+            rank = Math.clamp(rank - 30, 0, cannon.RANK_MAX);
             bulletml.Walker.globalScope["$rank"] = rank * 0.001;
             that.uiLayer.rankLabel.add(-30);
 
@@ -205,7 +205,7 @@ tm.define("cannon.GameScene", {
                         this.uiLayer.scoreLabel.add(delta);
                         shot.killEnemy(enemy, this.uiLayer);
 
-                        rank = Math.clamp(rank + rate, 0, 1000);
+                        rank = Math.clamp(rank + rate, 0, cannon.RANK_MAX);
                         bulletml.Walker.globalScope["$rank"] = rank * 0.001;
                         this.uiLayer.rankLabel.add(rate);
                     }

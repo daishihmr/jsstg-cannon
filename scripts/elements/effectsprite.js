@@ -25,7 +25,7 @@ tm.define("cannon.Explode", {
 
     init: function(x, y) {
         this.superInit("explode0", 128, 128, 64, 1);
-        this.setRotation(Math.rand(0, 360)).setScale(1.5).setPosition(x, y);
+        this.setRotation(Math.rand(0, 360)).setScale(2.0).setPosition(x, y);
     },
 
     onadded: function() {
@@ -38,7 +38,7 @@ tm.define("cannon.LargeExplode", {
 
     init: function(x, y) {
         this.superInit("explode1", 128, 128, 64, 1);
-        this.setRotation(Math.rand(0, 360)).setScale(2.5).setPosition(x, y);
+        this.setRotation(Math.rand(0, 360)).setScale(3.5).setPosition(x, y);
     },
 
     onadded: function() {
