@@ -35,6 +35,7 @@ cannon.ASSETS = {
     "aura": "images/aura.png",
     "shot": "images/shot.png",
     "backfire": "images/backfire.png",
+    "explodeSmall": "images/exp.png",
     "explode0": "images/exp_s.png",
     "explode1": "images/exp_l.png",
     "explodeBlue": "images/exp_blue.png",

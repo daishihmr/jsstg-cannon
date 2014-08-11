@@ -18,22 +18,36 @@ tm.main(function() {
         };
     }
 
-    var tester = document.createElement("span");
-    tester.style.fontFamily = "'OFL', 'monospace'";
-    tester.innerHTML = "QW@HhsXJ";
-    document.body.appendChild(tester);
+    var fonts = ["MagicRing", "OFL", "UFL"].map(function(ff) {
+        var font = { loaded: false };
 
-    var before = tester.offsetWidth;
-    var timeout = 20;
+        var tester = document.createElement("span");
+        tester.style.fontFamily = "'{0}', 'monospace'".format(ff);
+        tester.innerHTML = "QW@HhsXJ";
+        document.body.appendChild(tester);
+        var before = tester.offsetWidth;
+        var timeout = 30;
 
-    var checkLoadFont = function() {
-        timeout -= 1;
-        if (tester.offsetWidth !== before || timeout < 0) {
-            document.body.removeChild(tester);
-            cannon.app.run();
+        var checkLoadFont = function() {
+            timeout -= 1;
+            if (tester.offsetWidth !== before || timeout < 0) {
+                document.body.removeChild(tester);
+                font.loaded = true;
+            } else {
+                setTimeout(checkLoadFont, 100);
+            }
+        };
+        checkLoadFont();
+
+        return font;
+    });
+
+    var check = function() {
+        if (fonts.some(function(f){ return !f.loaded })) {
+            setTimeout(check, 100);
         } else {
-            setTimeout(checkLoadFont, 100);
+            cannon.app.run();
         }
     };
-    checkLoadFont();
+    check();
 });
