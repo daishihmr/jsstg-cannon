@@ -7,6 +7,6 @@ tm.define("cannon.Application", {
             if (37 <= e.keyCode && e.keyCode <= 40 || e.keyCode === 32) e.preventDefault();
         }, false);
 
-        this.canvas.imageSmoothingEnabled = true;
+        this.canvas.imageSmoothingEnabled = false;
     }
 });

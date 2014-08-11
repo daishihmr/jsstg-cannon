@@ -18,7 +18,7 @@ cannon.FIGHTER_SPEED = SC_W / 100;
 cannon.SHOT_SPEED = SC_W / 32;
 cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
-cannon.SHOT_RADIUS = SC_W / 96;
+cannon.SHOT_RADIUS = SC_W / 64;
 cannon.ZANKI_MAX = 10;
 
 cannon.optionSettings = {

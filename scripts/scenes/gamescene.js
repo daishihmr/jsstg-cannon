@@ -272,11 +272,11 @@ tm.define("cannon.GameScene", {
             }, 2000, "easeOutBack")
             .call(function() {
                 player.controllable = true;
-                player.boostOff();
             })
             .wait(2000)
             .call(function() {
                 player.muteki = false;
+                player.boostOff();
             });
     },
 

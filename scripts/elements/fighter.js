@@ -61,7 +61,7 @@ tm.define("cannon.Fighter", {
     update: function(app) {
         this.scaleX = this.direction;
 
-        this.alpha = this.muteki ? ((app.frame % 4) * 0.25 + 0.25) : 1.0;
+        // this.alpha = this.muteki ? ((app.frame % 4) * 0.25 + 0.25) : 1.0;
 
         if (this.controllable) {
             var kb = app.keyboard;

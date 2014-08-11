@@ -17,12 +17,19 @@ tm.define("cannon.MenuDialog", {
             cancelKey: "x",
         });
 
+        this.on("enter", function() {
+            cannon.playSe("extend");
+        });
+
         this.on("preselected", function() {
             cannon.playSe("extend");
         });
 
+        this.on("selected", function() {
+            cannon.playSe("shot");
+        });
+
         this.on("canceled", function() {
-            // TODO
             cannon.playSe("extend");
         });
     }
