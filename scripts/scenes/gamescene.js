@@ -1,26 +1,22 @@
 (function() {
 
-var score = 0;
-var rank = 0;
-var zanki = 3;
+var gameData = null;
+
+var fireCount = 0;
+var hitCount = 0;
+var comboCount = [0, 0, 0, 0, 0];
 
 tm.define("cannon.GameScene", {
     superClass: "tm.app.Scene",
 
-    init: function(stageIndex) {
+    init: function() {
         this.superInit();
-
-        this.stageIndex = stageIndex || 0;
+        cannon.gameScene = this;
 
         this.fromJSON({
             children: {
                 backgroundLayer: {
                     type: "tm.display.CanvasElement",
-                    children: {
-                        bg: {
-                            type: "cannon.Background"
-                        },
-                    },
                 },
                 playerLayer: {
                     type: "tm.display.CanvasElement",
@@ -34,12 +30,6 @@ tm.define("cannon.GameScene", {
                 },
                 terrainLayer: {
                     type: "tm.display.CanvasElement",
-                    children: [
-                        {
-                            type: "cannon.Terrain",
-                            init: [cannon.STAGE_DATA[this.stageIndex].terrain],
-                        },
-                    ],
                 },
                 enemyLayer: {
                     type: "tm.display.CanvasElement",
@@ -64,7 +54,32 @@ tm.define("cannon.GameScene", {
                             type: "cannon.ZankiLabel",
                             x: 32 + 5,
                             y: cannon.SC_H - 32 - 5,
-                        }
+                        },
+                        gameoverLabel: {
+                            type: "tm.display.Label",
+                            init: ["Game Over", 96],
+                            fillStyle: "hsl(0, 100%, 50%)",
+                            x: cannon.SC_W * 0.5,
+                            y: cannon.SC_H * 0.5,
+                            alpha: 0,
+                            visible: false,
+                        },
+                        warningLabel: {
+                            type: "tm.display.CanvasElement",
+                            alpha: 0,
+                            visible: false,
+                            children: [{
+                                type: "tm.display.Label",
+                                init: ["CAUTION!!", 96],
+                                fillStyle: "hsl(0, 100%, 50%)",
+                                x: cannon.SC_W * 0.5,
+                                y: cannon.SC_H * 0.5,
+                                shadowColor: "white",
+                                shadowBlur: 15,
+                                blendMode: "lighter",
+                                onenterframe: function(e){ this.alpha = 0.6 + Math.sin(e.app.frame * 0.2) * 0.4 },
+                            }],
+                        },
                     }
                 },
             },
@@ -72,44 +87,80 @@ tm.define("cannon.GameScene", {
 
         var that = this;
 
-        this.uiLayer.zankiLabel.setZanki(zanki);
-        this.uiLayer.scoreLabel.set(score);
-        this.uiLayer.rankLabel.set(rank);
+        gameData = cannon.GameData();
 
-        this.mt = new MersenneTwister(1000 + this.stageIndex);
-
-        this.scrollSpeed = cannon.STAGE_DATA[this.stageIndex].scrollSpeed;
-        this.stageStep = cannon.STAGE_DATA[this.stageIndex].stageStep;
-        this.waitCount = 0;
+        this.stageIndex = 0;
 
         this.player = this.playerLayer.player;
         this.player.on("killed", function() {
-            zanki -= 1;
-            if (zanki <= 0) {
+            gameData.zanki -= 1;
+            if (gameData.zanki <= 0) {
                 that.gameover();
                 return;
             }
 
-            rank = Math.clamp(rank - 30, 0, cannon.RANK_MAX);
-            bulletml.Walker.globalScope["$rank"] = rank * 0.001;
-            that.uiLayer.rankLabel.add(-30);
+            gameData.addRank(cannon.RANK_DOWN_AT_KILLED);
+            that.uiLayer.rankLabel.add(cannon.RANK_DOWN_AT_KILLED);
 
-            that.uiLayer.zankiLabel.setZanki(zanki);
+            that.uiLayer.zankiLabel.setZanki(gameData.zanki);
             that.tweener.clear().wait(500).call(function() {
                 that.launchPlayer();
             });
         });
 
-        bulletml.Walker.globalScope["$rank"] = rank * 0.001;
         this.bulletmlConfig = {
             target: this.player,
             createNewBullet: function(runner, spec) {
                 cannon.Bullet(runner, spec).addChildTo(this.bulletLayer);
-                console.log("create new")
             }.bind(this)
         };
+        bulletml.Walker.globalScope["$rank"] = gameData.rank * 0.001;
+
+        this.stageStart();
+    },
+
+    stageStart: function() {
+        this.uiLayer.zankiLabel.setZanki(gameData.zanki);
+        this.uiLayer.scoreLabel.set(gameData.score);
+        this.uiLayer.rankLabel.set(gameData.rank);
+
+        this.backgroundLayer.removeChildren();
+        this.terrainLayer.removeChildren();
+        this.enemyLayer.removeChildren();
+        this.bulletLayer.removeChildren();
+
+        fireCount = 0;
+        hitCount = 0;
+        comboCount = 0;
+
+        this.mt = new MersenneTwister(1000 + this.stageIndex);
+
+        cannon.Background(cannon.STAGE_DATA[this.stageIndex].background).addChildTo(this.backgroundLayer);
+        cannon.Terrain(cannon.STAGE_DATA[this.stageIndex].terrain).addChildTo(this.terrainLayer);
+        this.scrollSpeed = cannon.STAGE_DATA[this.stageIndex].scrollSpeed;
+        this.stageStep = cannon.STAGE_DATA[this.stageIndex].stageStep;
+        this.waitCount = 0;
 
         this.launchPlayer();
+    },
+
+    stageClear: function() {
+        var that = this;
+        var resultScene = cannon.ResultScene({
+            gameData: gameData,
+            fireCount: fireCount,
+            hitCount: hitCount,
+            comboCount: comboCount,
+        });
+        resultScene.on("finish", function() {
+            that.stageIndex += 1;
+            if (that.stageIndex < cannon.STAGE_COUNT) {
+                that.stageStart();
+            } else {
+                that.app.replaceScene(cannon.EndingScene(gameData.score));
+            }
+        });
+        this.app.pushScene(resultScene);
     },
 
     update: function(app) {
@@ -150,6 +201,8 @@ tm.define("cannon.GameScene", {
         case "enemy":
             this.launchEnemy(s);
             break;
+        case "boss":
+            break;
         }
     },
 
@@ -168,6 +221,12 @@ tm.define("cannon.GameScene", {
         case "homing":
             enemy.setHomingMotion(step.data, this.player);
             break;
+        case "run":
+            enemy.setRunMotion(step.data);
+            break;
+        case "jump":
+            enemy.setJumpMotion(step.data);
+            break;
         }
 
         var attack = step.attack;
@@ -175,7 +234,6 @@ tm.define("cannon.GameScene", {
             var m = attack.match("{(\\d)}");
             if (m) {
                 attack = attack.replace(m[0], this.mt.nextInt(~~m[1]));
-                console.log(attack);
             }
             var a = cannon.ATTACK_DATA[attack];
             if (a) enemy.startAttack(a, this.bulletmlConfig);
@@ -205,12 +263,11 @@ tm.define("cannon.GameScene", {
                         var rate = Math.min(shot.killCount, 5);
 
                         var delta = [1, 2, 4, 8, 16, 32][rate] * enemy.score;
-                        score += delta;
+                        gameData.addScore(delta);
                         this.uiLayer.scoreLabel.add(delta);
                         shot.killEnemy(enemy, this.uiLayer);
 
-                        rank = Math.clamp(rank + rate, 0, cannon.RANK_MAX);
-                        bulletml.Walker.globalScope["$rank"] = rank * 0.001;
+                        gameData.addRank(rate);
                         this.uiLayer.rankLabel.add(rate);
                     }
                 }
@@ -223,9 +280,12 @@ tm.define("cannon.GameScene", {
             var enemy = enemies[i];
             if (enemy.hasTerrainCollider) {
                 var line = null;
-                if (terrains.some(function(t) { return (line = t.getHitLine(enemy)) !== null })) {
+                var index = 0;
+                if (terrains.some(function(t, i){ index = i; return (line = t.getHitLine(enemy)) !== null })) {
                     var ev = tm.event.Event("hitterrain");
                     ev.line = line;
+                    ev.terrain = terrains[index];
+                    ev.gameScene = this;
                     enemy.fire(ev);
                 }
             }
@@ -309,9 +369,21 @@ tm.define("cannon.GameScene", {
     },
 
     gameover: function() {
-        // TODO
-        console.log("gameover!");
-        this.app.stop();
+        var gameoverLabel = this.uiLayer.gameoverLabel;
+        gameoverLabel.tweener.clear()
+            .set({
+                alpha: 0,
+                visible: true,
+            })
+            .fadeIn(500)
+            .wait(3000)
+            .set({
+                alpha: 0,
+                visible: false,
+            })
+            .call(function() {
+                cannon.app.replaceScene(cannon.TitleScene());
+            });
     },
 });
 

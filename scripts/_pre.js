@@ -9,9 +9,12 @@ var SC_W = 960;
 var SC_H = 640;
 
 cannon.app = null;
+cannon.gameScene = null;
 
 cannon.SC_W = SC_W;
 cannon.SC_H = SC_H;
+
+cannon.STAGE_COUNT = 1;
 
 cannon.FIGHTER_RADIUS = SC_W / 96;
 cannon.FIGHTER_SPEED = SC_W / 100;
@@ -21,6 +24,7 @@ cannon.SHOT_POWER = 3;
 cannon.SHOT_RADIUS = SC_W / 64;
 cannon.ZANKI_MAX = 10;
 cannon.RANK_MAX = 3000;
+cannon.RANK_DOWN_AT_KILLED = -30;
 
 cannon.optionSettings = {
     seVolume: 0.1,

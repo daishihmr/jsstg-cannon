@@ -22,8 +22,8 @@ tm.main(function() {
         for (var x = 0; x < COUNT; x++) {
             var sw = tm.graphics.Canvas().resize(SIZE, SIZE);
 
-            var r = Math.sqrt(i * 20);
-            var alpha = Math.pow(0.95, i);
+            var r = Math.sqrt(i * 15);
+            var alpha = Math.pow(0.93, i);
             sw.fillStyle = tm.graphics.RadialGradient(HS, HS, Math.max(0, r - 10), HS, HS, r)
                 .addColorStopList([
                     { offset: 0.0, color: "rgba(0, 0, 0, 0)" },

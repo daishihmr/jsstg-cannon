@@ -5,6 +5,9 @@ tm.define("cannon.TitleScene", {
         this.superInit();
         this.setInteractive(true);
 
+        var age = 0;
+        this.on("enterframe", function() { age += 1 });
+
         this.fromJSON({
             children: {
                 bgColor: {
@@ -20,6 +23,7 @@ tm.define("cannon.TitleScene", {
                     init: ["title", cannon.SC_H, cannon.SC_H],
                     x: cannon.SC_W * 0.5,
                     y: cannon.SC_H * 0.5,
+                    onenterframe: function(e){ this.alpha = 0.75 + Math.sin(age * 0.03) * 0.25 },
                 },
                 pre: {
                     type: "tm.display.Label",
@@ -28,6 +32,7 @@ tm.define("cannon.TitleScene", {
                     y: cannon.SC_H * 0.25 - 80,
                     shadowColor: "white",
                     shadowBlur: 15,
+                    blendMode: "lighter",
                 },
                 title: {
                     type: "tm.display.Label",
@@ -43,13 +48,23 @@ tm.define("cannon.TitleScene", {
                     shadowColor: "white",
                     shadowBlur: 15,
                     blendMode: "lighter",
-                    onenterframe: function(e){ this.alpha = 0.75 + Math.sin(e.app.frame * 0.1) * 0.25 },
                 },
                 credit: {
                     type: "tm.display.Label",
-                    init: ["Copyright (c) 2014 daishi_hmr", 24],
+                    init: ["Copyright © 2014 daishi_hmr", 24],
                     x: cannon.SC_W * 0.5,
                     y: cannon.SC_H * 0.9,
+                },
+                prompt: {
+                    type: "tm.display.Label",
+                    init: ["press [Z] key", 36],
+                    fillStyle: "hsl(200, 90%, 70%)",
+                    x: cannon.SC_W * 0.5,
+                    y: cannon.SC_H * 0.8,
+                    shadowColor: "white",
+                    shadowBlur: 5,
+                    blendMode: "lighter",
+                    onenterframe: function(e){ this.alpha = 0.6 + Math.sin(age * 0.2) * 0.4 },
                 },
             }
         });

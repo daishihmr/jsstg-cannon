@@ -1,12 +1,12 @@
 tm.define("cannon.Background", {
     superClass: "tm.display.CanvasElement",
 
-    init: function() {
+    init: function(data) {
         this.superInit();
 
         var that = this;
         Array.range(0, 3).forEach(function(index) {
-            var panel = tm.display.Sprite("test", cannon.SC_H, cannon.SC_H)
+            var panel = tm.display.Sprite(data.texture, cannon.SC_H, cannon.SC_H)
                 .setOrigin(0, 0)
                 .setPosition(cannon.SC_H * index, 0)
                 .addChildTo(that);

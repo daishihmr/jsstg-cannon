@@ -133,7 +133,7 @@ tm.define("cannon.Fighter", {
 
     damage: function() {
         if (this.controllable && !this.muteki) {
-            cannon.PlayerExplode(this.x, this.y).addChildTo(this.parent);
+            if (this.parent) cannon.PlayerExplode(this.x, this.y).addChildTo(this.parent);
             this.remove();
             this.flare("killed");
             return true;

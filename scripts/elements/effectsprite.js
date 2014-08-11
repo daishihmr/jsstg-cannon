@@ -20,6 +20,15 @@ tm.define("cannon.EffectSprite", {
     }
 });
 
+tm.define("cannon.SmallExplode", {
+    superClass: "cannon.EffectSprite",
+
+    init: function(x, y) {
+        this.superInit("explodeSmall", 64, 64, 64, 1);
+        this.setRotation(Math.rand(0, 360)).setScale(2.0).setPosition(x, y);
+    },
+});
+
 tm.define("cannon.Explode", {
     superClass: "cannon.EffectSprite",
 

@@ -28,8 +28,6 @@ tm.define("cannon.Enemy", {
             score: data.score,
             hp: data.hp,
             expType: data.expType,
-            hasTerrainCollider: data.hasTerrainCollider,
-            isGround: data.isGround,
             size: data.size,
         });
 
@@ -58,10 +56,6 @@ tm.define("cannon.Enemy", {
         this.on("removed", function() {
             cannon.Enemy.ACTIVES.erase(this);
         });
-
-        // this.on("hitterrain", function() {
-        //     this.damage(100);
-        // });
     },
 
     setRoute: function(data) {
@@ -105,6 +99,64 @@ tm.define("cannon.Enemy", {
                     .normalize();
             }
             this.position.add(tm.geom.Vector2.mul(this.velocity, data.speed));
+        });
+    },
+
+    setRunMotion: function(data) {
+        this.setPosition(data.x, data.y);
+        if (data.vx < 0) {
+            this.scaleX = -1;
+        } else {
+            this.scaleX = 1;
+        }
+        this.hasTerrainCollider = true;
+        this.isGround = true;
+        this.on("hitterrain", function(e) {
+            var c = {
+                x: this.x + e.terrain.scroll,
+                y: this.y,
+                radius: this.radius,
+            };
+            var line = e.line;
+            while (cannon.CollisionHelper.isHitCircleLine(c, line)) {
+                c.y -= data.g * 0.1;
+                this.y -= data.g * 0.1;
+            }
+        });
+        this.on("enterframe", function() {
+            this.x += data.vx;
+            this.y += data.g;
+        });
+    },
+
+    setJumpMotion: function(data) {
+        this.setPosition(data.x, data.y);
+        if (data.vx < 0) {
+            this.scaleX = -1;
+        } else {
+            this.scaleX = 1;
+        }
+        this.hasTerrainCollider = true;
+        this.isGround = true;
+        this.on("hitterrain", function(e) {
+            var c = {
+                x: this.x + e.terrain.scroll,
+                y: this.y,
+                radius: this.radius,
+            };
+            var line = e.line;
+            while (cannon.CollisionHelper.isHitCircleLine(c, line)) {
+                c.y -= data.g * 0.1;
+                this.y -= data.g * 0.1;
+                vy = data.vy;
+            }
+        });
+
+        var vy = data.g;
+        this.on("enterframe", function() {
+            this.x += data.vx;
+            this.y += vy;
+            vy += data.g;
         });
     },
 
