@@ -8,6 +8,12 @@ tm.define("cannon.LoadingScene", {
         this.stage.draw = function(canvas) {
             canvas.clear(0, 0, cannon.SC_W, cannon.SC_H);
         };
+
+        for (var i = 0; i < 10; i++) {
+            this._createHiyoko(this.param)
+                .setPosition(Math.rand(0, cannon.SC_W), Math.rand(0, cannon.SC_H))
+                .addChildTo(this.stage.piyoLayer);
+        }
     },
 
     _createHiyoko: function(param) {
@@ -15,7 +21,11 @@ tm.define("cannon.LoadingScene", {
         var piyo = tm.display.Shape(84, 84);
         piyo.x = tm.util.Random.randint(0, param.width);
         piyo.y = tm.util.Random.randint(0, param.height);
-        piyo.canvas.setColorStyle("white", "hsl(220, 80%, 80%").fillCircle(42, 42, 32);
+        piyo.canvas.setColorStyle("white", tm.graphics.RadialGradient(42, 42, 0, 42, 42, 32).addColorStopList([
+            { offset: 0.0, color: "hsla(200,100%, 80%, 1.0)" },
+            { offset: 0.5, color: "hsla(200,100%, 80%, 1.0)" },
+            { offset: 1.0, color: "hsla(200,100%, 70%, 0.0)" },
+        ]).toStyle()).fillCircle(42, 42, 32);
         piyo.canvas.setColorStyle("white", "black").fillCircle(27, 27, 2);
         piyo.canvas.setColorStyle("white", "brown").fillRect(40, 70, 4, 15).fillTriangle(0, 40, 11, 35, 11, 45);
         piyo.dir = tm.geom.Vector2.random(0, 360, 4);

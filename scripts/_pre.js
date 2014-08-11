@@ -30,6 +30,7 @@ cannon.optionSettings = {
 tm.display.Label.default.fontFamily = "OFL";
 
 cannon.ASSETS = {
+    "title": "images/title.png",
     "fighter": "images/fighter.png",
     "aura": "images/aura.png",
     "shot": "images/shot.png",

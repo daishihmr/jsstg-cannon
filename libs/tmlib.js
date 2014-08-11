@@ -532,7 +532,7 @@ if (typeof module !== 'undefined' && module.exports) {
     Object.defineInstanceMethod("$safe", function(source) {
         Array.prototype.forEach.call(arguments, function(source) {
             for (var property in source) {
-                if (this[property] === undefined || this[property] === null) this[property] = source[property];
+                if (this[property] === undefined) this[property] = source[property];
             }
         }, this);
         return this;
@@ -11832,10 +11832,8 @@ tm.app = tm.app || {};
         stats         : null,
         /** タイマー */
         timer         : null,
-        /** フレームレート */
-        fps           : 30,
         /** 現在更新中か */
-        isPlaying     : null,
+        awake         : null,
         /** @private  シーン情報の管理 */
         _scenes       : null,
         /** @private  シーンのインデックス */
@@ -11869,7 +11867,7 @@ tm.app = tm.app || {};
             this.updater = tm.app.Updater(this);
             
             // 再生フラグ
-            this.isPlaying = true;
+            this.awake = true;
             
             // シーン周り
             this._scenes = [ tm.app.Scene() ];
@@ -11890,7 +11888,7 @@ tm.app = tm.app || {};
                 this.currentScene.dispatchEvent(tm.event.Event("blur"));
             }.bind(this));
             // クリック
-            this.element.addEventListener((tm.isMobile) ? "touchstart" : "mousedown", this._onclick.bind(this));
+            this.element.addEventListener((tm.isMobile) ? "touchend" : "mouseup", this._onclick.bind(this));
         },
         
         /**
@@ -11898,32 +11896,30 @@ tm.app = tm.app || {};
          */
         run: function() {
             var self = this;
-            
-            // // requestAnimationFrame version
-            // var fn = function() {
-                // self._loop();
-                // requestAnimationFrame(fn);
-            // }
-            // fn();
 
             this.startedTime = new Date();
             this.prevTime = new Date();
             this.deltaTime = 0;
 
-            tm.setLoop(function(){ self._loop(); }, this.timer.frameTime);
-            
-            return ;
-            
-            if (true) {
-                setTimeout(arguments.callee.bind(this), 1000/this.fps);
-                this._loop();
-            }
-            
-            return ;
-            
-            var self = this;
-            // setInterval(function(){ self._loop(); }, 1000/self.fps);
-            tm.setLoop(function(){ self._loop(); }, 1000/self.fps);
+            var _run = function() {
+                // start
+                var start = (new Date()).getTime();
+
+                // run
+                self._loop();
+
+                // calculate progress time
+                var progress = (new Date()).getTime() - start;
+                // calculate next waiting time
+                var newDelay = self.timer.frameTime-progress;
+
+                // set next running function
+                setTimeout(_run, newDelay);
+            };
+
+            _run();
+
+            return this;
         },
         
         /*
@@ -12056,7 +12052,7 @@ tm.app = tm.app || {};
          * シーンのupdateを実行するようにする
          */
         start: function() {
-            this.isPlaying = true;
+            this.awake = true;
 
             return this;
         },
@@ -12065,7 +12061,7 @@ tm.app = tm.app || {};
          * シーンのupdateを実行しないようにする
          */
         stop: function() {
-            this.isPlaying = false;
+            this.awake = false;
 
             return this;
         },
@@ -12081,7 +12077,7 @@ tm.app = tm.app || {};
             this.touch.update();
             // this.touches.update();
             
-            if (this.isPlaying) {
+            if (this.awake) {
                 this.updater.update(this.currentScene);
                 this.timer.update();
             }
@@ -12106,26 +12102,14 @@ tm.app = tm.app || {};
          * @param {Object} e
          */
         _onclick: function(e) {
-            var px = e.pointX;
-            var py = e.pointY;
-
-            if (this.element.style.width) {
-                px *= this.element.width / parseInt(this.element.style.width);
-            }
-            if (this.element.style.height) {
-                py *= this.element.height / parseInt(this.element.style.height);
-            }
-
             var _fn = function(elm) {
                 if (elm.children.length > 0) {
-                    elm.children.each(function(elm) {
-                        if (elm.hasEventListener("click")) {
-                            if (elm.isHitPoint && elm.isHitPoint(px, py)) {
-                                elm.dispatchEvent(tm.event.Event("click"));
-                            }
-                        }
-                    });
+                    elm.children.each(function(elm) { _fn(elm); });
                 }
+                if (elm._clickFlag && elm.hasEventListener("click")) {
+                    elm.dispatchEvent(tm.event.Event("click"));
+                }
+                elm._clickFlag = false;
             };
             _fn(this.currentScene);
         },
@@ -12483,6 +12467,7 @@ tm.app = tm.app || {};
             this.interactive = false;
             this.hitFlags = [];
             this.downFlags= [];
+            this._clickFlag = false;
 
             this._worldMatrix = tm.geom.Matrix33();
             this._worldMatrix.identity();
@@ -12825,9 +12810,8 @@ tm.app = tm.app || {};
             var elm = this.element;
             
             var prevHitFlag = this.hitFlags[index];
-            
             this.hitFlags[index]    = this.isHitPoint(p.x, p.y);
-            
+
             if (!prevHitFlag && this.hitFlags[index]) {
                 this._dispatchPointingEvent("mouseover", "touchover", "pointingover", app, p);
             }
@@ -12840,6 +12824,7 @@ tm.app = tm.app || {};
                 if (p.getPointingStart()) {
                     this._dispatchPointingEvent("mousedown", "touchstart", "pointingstart", app, p);
                     this.downFlags[index] = true;
+                    this._clickFlag = true;
                 }
             }
             
@@ -15502,6 +15487,7 @@ tm.display = tm.display || {};
             this.height= chipWidth*this.mapSheet.height;
 
             this.tileset = [];
+            this.tilesetInfo = {};
             this._build();
         },
 
@@ -15511,8 +15497,8 @@ tm.display = tm.display || {};
         _build: function() {
             var self = this;
 
-            this.mapSheet.tilesets.each(function(tileset) {
-                self._buildTileset(tileset);
+            this.mapSheet.tilesets.each(function(tileset, index) {
+                self._buildTileset(tileset, index);
             });
 
             this.mapSheet.layers.each(function(layer, hoge) {
@@ -15528,12 +15514,23 @@ tm.display = tm.display || {};
         /**
          * @private
          */
-        _buildTileset: function(tileset) {
+        _buildTileset: function(tileset, index) {
             var self      = this;
             var mapSheet  = this.mapSheet;
             var texture   = tm.asset.Manager.get(tileset.image);
             var xIndexMax = (texture.width / mapSheet.tilewidth)|0;
             var yIndexMax = (texture.height / mapSheet.tileheight)|0;
+
+            var info = {
+                begin: self.tileset.length,
+                end: self.tileset.length + xIndexMax * yIndexMax
+            };
+
+            self.tilesetInfo[index] = info;
+
+            if (tileset.name !== undefined) {
+                self.tilesetInfo[tileset.name] = info;
+            }
 
             yIndexMax.times(function(my) {
                 xIndexMax.times(function(mx) {
@@ -15560,7 +15557,23 @@ tm.display = tm.display || {};
             var shape    = tm.display.Shape(this.width, this.height).addChildTo(this);
             var visible  = (layer.visible === 1) || (layer.visible === undefined);
             var opacity  = layer.opacity === undefined ? 1 : layer.opacity;
+            var tileset  = [];
             shape.origin.set(0, 0);
+
+            if (layer.tilesets !== undefined) {
+                var tilesets = null;
+                if (Array.isArray(layer.tilesets)) {
+                    tilesets = layer.tilesets;
+                } else {
+                    tilesets = [layer.tilesets];
+                }
+                tilesets.each(function(n) {
+                    var info = self.tilesetInfo[n];
+                    tileset = tileset.concat(self.tileset.slice(info.begin, info.end));
+                });
+            } else {
+                tileset = self.tileset;
+            }
 
             if (visible) {
                 layer.data.each(function(d, index) {
@@ -15569,13 +15582,16 @@ tm.display = tm.display || {};
                         return ;
                     }
                     type = Math.abs(type);
+                    if (tileset[type] === undefined) {
+                        return ;
+                    }
 
                     var xIndex = index%mapSheet.width;
                     var yIndex = (index/mapSheet.width)|0;
                     var dx = xIndex*self.chipWidth;
                     var dy = yIndex*self.chipHeight;
 
-                    var tile = self.tileset[type];
+                    var tile = tileset[type];
 
                     var texture = tm.asset.Manager.get(tile.image);
                     var rect = tile.rect;
@@ -16287,6 +16303,19 @@ tm.ui = tm.ui || {};
 
             this.params = {}.$extend(tm.ui.MenuDialog.DEFAULT_PARAM, params);
 
+            this.fromJSON({
+                children: {
+                    bg: {
+                        type: "tm.display.RectangleShape",
+                        init: [this.params.width, this.params.height, {
+                            fillStyle: this.params.backgroundColor,
+                            strokeStyle: "transparent"
+                        }],
+                        originX: 0, originY: 0,
+                    },
+                },
+            });
+
             this.menu = this.params.menu.clone();
             this.currentIndex = this.params.defaultIndex;
             if (this.params.menuDesctiptions) {
@@ -16301,18 +16330,18 @@ tm.ui = tm.ui || {};
             }
 
             var height = Math.max((1 + this.menu.length) * 50, 50) + 40;
-            this.box = tm.display.RectangleShape(this.params.screenWidth * 0.8, height, {
+            this.box = tm.display.RectangleShape(this.params.width * 0.8, height, {
                 strokeStyle: "transparent",
                 fillStyle: this.params.boxColor,
             })
-                .setPosition(this.params.screenWidth * 0.5, this.params.screenHeight * 0.5)
+                .setPosition(this.params.width * 0.5, this.params.height * 0.5)
                 .setSize(1, 1)
                 .setBoundingType("rect")
                 .addChildTo(this);
 
             this.box.tweener
                 .to({
-                    width: this.params.screenWidth * 0.8,
+                    width: this.params.width * 0.8,
                     height: height
                 }, 200, "easeOutExpo")
                 .call(this._onOpen.bind(this));
@@ -16320,21 +16349,21 @@ tm.ui = tm.ui || {};
             this.description = tm.display.Label("", this.params.fontSize)
                 .setAlign("center")
                 .setBaseline("middle")
-                .setPosition(this.params.screenWidth * 0.5, this.params.screenHeight - this.params.fontSize)
+                .setPosition(this.params.width * 0.5, this.params.height - this.params.fontSize)
                 .addChildTo(this);
 
-            var y = this.params.screenHeight * 0.5 - this.menu.length * 25;
+            var y = this.params.height * 0.5 - this.menu.length * 25;
 
             this.title = tm.display.Label(this.params.title, this.params.fontSize * 1.2)
                 .setAlign("center")
                 .setBaseline("middle")
-                .setPosition(this.params.screenWidth * 0.5, y);
+                .setPosition(this.params.width * 0.5, y);
 
             var self = this;
             this.menuItems = this.menu.map(function(text, i) {
                 y += 50;
                 var menuItem = tm.ui.LabelButton(text)
-                    .setPosition(self.params.screenWidth * 0.5, y)
+                    .setPosition(self.params.width * 0.5, y)
                     .setFontSize(self.params.fontSize)
                     .setInteractive(true)
                     .on("pointingend", function() {
@@ -16344,7 +16373,7 @@ tm.ui = tm.ui || {};
                             self.currentIndex = i;
                         }
                     });
-                menuItem.width = self.params.screenWidth * 0.7;
+                menuItem.width = self.params.width * 0.7;
                 return menuItem;
             });
 
@@ -16384,11 +16413,11 @@ tm.ui = tm.ui || {};
         _createCursor: function() {
             var self = this;
 
-            var cursor = tm.display.RectangleShape(this.params.screenWidth * 0.7, 30, {
+            var cursor = tm.display.RectangleShape(this.params.width * 0.7, 30, {
                 strokeStyle: "transparent",
                 fillStyle: this.params.cursorColor
             });
-            cursor.x = this.params.screenWidth * 0.5;
+            cursor.x = this.params.width * 0.5;
             cursor.target = this.currentIndex;
             
             cursor.update = function() {
@@ -16481,22 +16510,13 @@ tm.ui = tm.ui || {};
                     .setLoop(true);
             }
         },
-
-        /**
-         * 描画
-         */
-        draw: function(canvas) {
-            canvas.fillStyle = this.params.backgroundColor;
-            canvas.fillRect(0, 0, this.params.screenWidth, this.params.screenHeight);
-        },
-
     });
 
     tm.ui.MenuDialog.DEFAULT_PARAM = {
         title: "MENU",
         defaultIndex: 0,
-        screenWidth: 640,
-        screenHeight: 960,
+        width: 640,
+        height: 960,
         fontSize: 30,
         okKey: "enter",
         cancelKey: "escape",

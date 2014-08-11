@@ -6,10 +6,10 @@ tm.define("cannon.Terrain", {
 
         this.lines = [];
         for (var i = 0, len = data.lines.length; i < len; i++) {
-            this.lines.push({
-                a: tm.geom.Vector2(data.lines[i][0], data.lines[i][1]),
-                b: tm.geom.Vector2(data.lines[i][2], data.lines[i][3]),
-            });
+            this.lines.push(cannon.TerrainLine(
+                tm.geom.Vector2(data.lines[i][0], data.lines[i][1]),
+                tm.geom.Vector2(data.lines[i][2], data.lines[i][3])
+            ));
         }
 
         this.scroll = 0;
@@ -25,28 +25,7 @@ tm.define("cannon.Terrain", {
             });
     },
 
-    // draw: function(canvas) {
-    //     var context = canvas;
-    //     var lines = this.lines;
-    //     var scroll = this.scroll;
-
-    //     context.lineWidth = 2;
-
-    //     context.beginPath();
-    //     for (var i = 0, len = lines.length; i < len; i++) {
-    //         var line = lines[i];
-    //         var a = line.a;
-    //         var b = line.b;
-
-    //         if (0 <= a.x - scroll && a.x - scroll < cannon.SC_W || 0 <= b.x - scroll && b.x - scroll < cannon.SC_W) {
-    //             context.moveTo(a.x - scroll, a.y);
-    //             context.lineTo(b.x - scroll, b.y);
-    //         }
-    //     }
-    //     context.stroke();
-    // },
-
-    isHit: function(target) {
+    getHitLine: function(target) {
         var c = {
             x: target.x + this.scroll,
             y: target.y,
@@ -60,12 +39,26 @@ tm.define("cannon.Terrain", {
             var b = line.b;
 
             if (0 <= a.x - scroll && a.x - scroll < cannon.SC_W || 0 <= b.x - scroll && b.x - scroll < cannon.SC_W) {
+
+                // TODO 判定の必要ないものは飛ばす
+
                 if (cannon.CollisionHelper.isHitCircleLine(c, line)) {
-                    return true;
+                    return line;
                 }
             }
         }
-        return false;
+        return null;
     },
 
+});
+
+tm.define("cannon.TerrainLine", {
+    /**
+     * @param {tm.geom.Vector2} a
+     * @param {tm.geom.Vector2} b
+     */
+    init: function(a, b) {
+        this.a = a;
+        this.b = b;
+    }
 });

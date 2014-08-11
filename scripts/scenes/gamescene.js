@@ -117,12 +117,16 @@ tm.define("cannon.GameScene", {
         var terrains = this.terrainLayer.children;
         var backgrounds = this.backgroundLayer.children;
 
-        terrains.forEach(function(t){
-            t.scroll += that.scrollSpeed;
-        });
-        backgrounds.forEach(function(bg){
-            bg.scroll += that.scrollSpeed * 0.5;
-        });
+        for (var i = 0, len = terrains.length; i < len; i++) {
+            terrains[i].scroll += this.scrollSpeed;
+        }
+        for (var i = 0, len = backgrounds.length; i < len; i++) {
+            backgrounds[i].scroll += this.scrollSpeed * 0.5;
+        }
+        for (var i = 0, len = cannon.Enemy.ACTIVES.length; i < len; i++) {
+            var enemy = cannon.Enemy.ACTIVES[i];
+            if (enemy.isGround) enemy.x -= that.scrollSpeed;
+        }
 
         this.step();
 
@@ -182,16 +186,16 @@ tm.define("cannon.GameScene", {
         var that = this;
         var player = this.player;
         var terrains = this.terrainLayer.children;
-        var bullets = cannon.Bullet.ACTIVES.clone();
+        var bullets;
         var shots;
         var enemies;
 
         // enemy vs shot
         enemies = cannon.Enemy.ACTIVES.clone();
         shots = cannon.Shot.ACTIVES.clone();
-        for (var i = 0, il = shots.length; i < il; i++) {
+        for (var i = 0, ilen = shots.length; i < ilen; i++) {
             var shot = shots[i];
-            for (var j = 0, jl = enemies.length; j < jl; j++) {
+            for (var j = 0, jlen = enemies.length; j < jlen; j++) {
                 var enemy = enemies[j];
                 if (shot.isHitElement(enemy)) {
                     if (!enemy.damage(cannon.SHOT_POWER)) {
@@ -213,11 +217,34 @@ tm.define("cannon.GameScene", {
             }
         }
 
+        // terrain vs enemy
+        enemies = cannon.Enemy.ACTIVES.clone();
+        for (var i = 0, len = enemies.length; i < len; i++) {
+            var enemy = enemies[i];
+            if (enemy.hasTerrainCollider) {
+                var line = null;
+                if (terrains.some(function(t) { return (line = t.getHitLine(enemy)) !== null })) {
+                    var ev = tm.event.Event("hitterrain");
+                    ev.line = line;
+                    enemy.fire(ev);
+                }
+            }
+        }
+
+        // terrain vs bullet
+        bullets = cannon.Bullet.ACTIVES.clone();
+        for (var i = 0, len = bullets.length; i < len; i++) {
+            var bullet = bullets[i];
+            if (terrains.some(function(t) { return t.getHitLine(bullet) !== null })) {
+                bullet.damage();
+            }
+        }
+
         // terrain vs shot
         shots = cannon.Shot.ACTIVES.clone();
         for (var i = 0, len = shots.length; i < len; i++) {
             var shot = shots[i];
-            if (terrains.some(function(t) { return t.isHit(shot) })) {
+            if (terrains.some(function(t) { return t.getHitLine(shot) !== null })) {
                 shot.damage();
             }
         }
@@ -226,7 +253,7 @@ tm.define("cannon.GameScene", {
 
             // enemy vs player
             enemies = cannon.Enemy.ACTIVES.clone();
-            for (var i = 0, l = enemies.length; i < l; i++) {
+            for (var i = 0, len = enemies.length; i < len; i++) {
                 var enemy = enemies[i];
                 if (player.isHitElement(enemy)) {
                     if (player.damage()) {
@@ -236,7 +263,8 @@ tm.define("cannon.GameScene", {
             }
 
             // bullet vs player
-            for (var i = 0, l = bullets.length; i < l; i++) {
+            bullets = cannon.Bullet.ACTIVES.clone();
+            for (var i = 0, len = bullets.length; i < len; i++) {
                 var bullet = bullets[i];
                 if (player.isHitElement(bullet)) {
                     bullet.damage();
@@ -247,7 +275,7 @@ tm.define("cannon.GameScene", {
             }
 
             // terrain vs player
-            if (terrains.some(function(t) { return t.isHit(player) })) {
+            if (terrains.some(function(t) { return t.getHitLine(player) !== null })) {
                 player.damage();
             }
 

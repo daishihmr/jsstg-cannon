@@ -1,32 +1,43 @@
 tm.define("cannon.Enemy", {
     superClass: "tm.display.Sprite",
 
+    /** 素点 */
     score: 0,
+    /** 耐久力 */
     hp: 0,
+    /** 無敵フラグ */
     muteki: 0,
+    /** 出現後画面内に入ったか */
     entered: false,
+    /** 爆発タイプ */
     expType: 0,
+    /** 出現後経過フレーム */
     age: 0,
+    /** 地形と衝突あり */
+    hasTerrainCollider: false,
+    /** 地形のスクロールと位置が同期する */
+    isGround: false,
 
     init: function(data) {
         this.superInit(data.texture, data.size * 2, data.size * 2);
-        this
-            .setFrameIndex(0)
-            .setBoundingType("circle")
-            .setBlendMode("lighter");
-        this.size = data.size;
-        this.radius = data.size * 0.5;
+        this.fromJSON({
+            frameIndex: 0,
+            boundingType: "circle",
+            blendMode: "lighter",
+            radius: data.size * 0.5,
+            score: data.score,
+            hp: data.hp,
+            expType: data.expType,
+            hasTerrainCollider: data.hasTerrainCollider,
+            isGround: data.isGround,
+            size: data.size,
+        });
 
-        this.score = data.score;
-        this.hp = data.hp;
-        this.expType = data.expType;
-        this.age = 0;
-
-        if (data.rotation === "rotate") {
+        if (data.rotation === "rot") {
             this.on("enterframe", function() {
                 this.rotation += 6;
             });
-        } else if (data.rotation === "direction") {
+        } else if (data.rotation === "dir") {
             var bx = 0;
             var by = 0;
             this.on("enterframe", function() {
@@ -47,6 +58,10 @@ tm.define("cannon.Enemy", {
         this.on("removed", function() {
             cannon.Enemy.ACTIVES.erase(this);
         });
+
+        // this.on("hitterrain", function() {
+        //     this.damage(100);
+        // });
     },
 
     setRoute: function(data) {
@@ -70,6 +85,11 @@ tm.define("cannon.Enemy", {
 
     setHorizontalMotion: function(data) {
         this.setPosition(data.x, data.y);
+        if (data.vx < 0) {
+            this.scaleX = -1;
+        } else {
+            this.scaleX = 1;
+        }
         this.on("enterframe", function() {
             this.x += data.vx;
         });
