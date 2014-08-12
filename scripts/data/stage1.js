@@ -380,6 +380,9 @@ cannon.STAGE_DATA[0] = {
         wait(120),
         enemy5(160),
         enemy5(480),
+
+        wait(250),
+        { type: "boss", boss: "cannon.Boss1" },
     ],
 };
 

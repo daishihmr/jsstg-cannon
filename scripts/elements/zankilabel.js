@@ -1,6 +1,8 @@
 tm.define("cannon.ZankiLabel", {
     superClass: "tm.display.CanvasElement",
 
+    _zanki: 0,
+
     init: function() {
         this.superInit();
         this.fromJSON({
@@ -28,13 +30,15 @@ tm.define("cannon.ZankiLabel", {
                 };
             }),
         });
-
-        this.setZanki(0);
     },
+});
 
-    setZanki: function(v) {
+cannon.ZankiLabel.prototype.accessor("zanki", {
+    get: function(){ return this._zanki },
+    set: function(v) {
+        this._zanki = v;
         this.children.forEach(function(c, i) {
             c.visible = i < v - 1;
         });
-    },
+    }
 });

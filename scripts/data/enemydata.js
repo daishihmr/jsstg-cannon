@@ -15,3 +15,13 @@ cannon.ENEMY_DATA = [
     { texture: "enemy13", size:  64, score: 100, hp: 1, expType: 0, rotation: "rot", }, // 13
     { texture: "enemy14", size:  64, score: 100, hp: 1, expType: 0, rotation: "rot", }, // 14
 ];
+
+cannon.BOSS1_DATA = {
+    parts: [
+        { texture: "boss1_2", size: 128, score: 500, hp: 20, expType: 1, x:-50, y: -60, scaleX:-1, scaleY: 1, delay: 3 },
+        { texture: "boss1_3", size: 128, score: 500, hp: 20, expType: 1, x: 40, y: -80, scaleX:-1, scaleY: 1, delay: 6 },
+        { texture: "boss1_2", size: 128, score: 500, hp: 20, expType: 1, x:-50, y:  60, scaleX:-1, scaleY:-1, delay: 3 },
+        { texture: "boss1_3", size: 128, score: 500, hp: 20, expType: 1, x: 40, y:  80, scaleX:-1, scaleY:-1, delay: 6 },
+        { texture: "boss1_1", size: 128, score: 500, hp: 20, expType: 1, x:  0, y:   0, scaleX:-1, scaleY: 1, delay: 0 },
+    ],
+};

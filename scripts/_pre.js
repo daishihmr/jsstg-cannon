@@ -21,7 +21,7 @@ cannon.FIGHTER_SPEED = SC_W / 100;
 cannon.SHOT_SPEED = SC_W / 32;
 cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
-cannon.SHOT_RADIUS = SC_W / 64;
+cannon.SHOT_RADIUS = SC_W / 32;
 cannon.ZANKI_MAX = 10;
 cannon.RANK_MAX = 3000;
 cannon.RANK_DOWN_AT_KILLED = -30;
@@ -49,6 +49,10 @@ cannon.ASSETS = {
     "boost": "images/boost.png",
     "bullet": "images/bullet.png",
     "scorerate": "images/scorerate.png",
+
+    "boss1_1": "images/boss1_1.png",
+    "boss1_2": "images/boss1_2.png",
+    "boss1_3": "images/boss1_3.png",
 
     "sounds/extend": "sounds/extend.mp3",
     "sounds/reload": "sounds/sen_ge_gun_otosu03.mp3",

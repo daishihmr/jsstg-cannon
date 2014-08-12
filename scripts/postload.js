@@ -2,8 +2,26 @@ cannon.onAssetsLoaded = function(nextScene) {
     return function() {
 
         // enemy
-        Array.range(0, 14 + 1).forEach(function(i) {
-            var name = "enemy{0}".format(i);
+        [
+            "enemy0",
+            "enemy1",
+            "enemy2",
+            "enemy3",
+            "enemy4",
+            "enemy5",
+            "enemy6",
+            "enemy7",
+            "enemy8",
+            "enemy9",
+            "enemy10",
+            "enemy11",
+            "enemy12",
+            "enemy13",
+            "enemy14",
+            "boss1_1",
+            "boss1_2",
+            "boss1_3",
+        ].forEach(function(name) {
             var tex = tm.asset.Manager.get(name);
 
             var glow = tm.graphics.Canvas().resize(tex.width * 2, tex.height * 2);

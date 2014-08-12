@@ -1,7 +1,7 @@
 tm.define("cannon.RankLabel", {
     superClass: "tm.display.Label",
 
-    rank: 0,
+    _rank: 0,
     showing: 0,
 
     init: function() {
@@ -13,16 +13,9 @@ tm.define("cannon.RankLabel", {
             .setFontFamily("UFL");
     },
 
-    add: function(delta) {
-        this.rank = Math.clamp(this.rank + delta, 0, cannon.RANK_MAX);
-        this.tweener.clear().to({
-            showing: this.rank
-        }, 500);
-    },
-
-    set: function(rank) {
-        this.rank = rank;
-        this.showing = rank;
+    clearAnimation: function() {
+        this.showing = this._rank;
+        this.tweener.clear();
     },
 
     update: function(app) {
@@ -30,5 +23,15 @@ tm.define("cannon.RankLabel", {
         if (this.text !== t) this.text = t;
 
         this.alpha = 0.6 + Math.sin(app.frame * 0.1) * 0.4;
+    }
+});
+
+cannon.RankLabel.prototype.accessor("rank", {
+    get: function(){ return this._rank },
+    set: function(v) {
+        this._rank = v;
+        this.tweener.clear().to({
+            showing: this._rank
+        }, 500);
     }
 });

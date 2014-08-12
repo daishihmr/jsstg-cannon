@@ -88,6 +88,20 @@ tm.define("cannon.GameScene", {
         var that = this;
 
         gameData = cannon.GameData();
+        gameData.on("updatescore", function() {
+            that.uiLayer.scoreLabel.score = this.score;
+        });
+        gameData.on("updaterank", function() {
+            that.uiLayer.rankLabel.rank = this.rank;
+        });
+        gameData.on("updatezanki", function() {
+            that.uiLayer.zankiLabel.zanki = this.zanki;
+        });
+        gameData.initializeValues();
+
+        if (location.hostname === "localhost") {
+            cannon.gameData = gameData;
+        }
 
         this.stageIndex = 0;
 
@@ -99,10 +113,8 @@ tm.define("cannon.GameScene", {
                 return;
             }
 
-            gameData.addRank(cannon.RANK_DOWN_AT_KILLED);
-            that.uiLayer.rankLabel.add(cannon.RANK_DOWN_AT_KILLED);
+            gameData.rank += cannon.RANK_DOWN_AT_KILLED;
 
-            that.uiLayer.zankiLabel.setZanki(gameData.zanki);
             that.tweener.clear().wait(500).call(function() {
                 that.launchPlayer();
             });
@@ -114,20 +126,26 @@ tm.define("cannon.GameScene", {
                 cannon.Bullet(runner, spec).addChildTo(this.bulletLayer);
             }.bind(this)
         };
-        bulletml.Walker.globalScope["$rank"] = gameData.rank * 0.001;
 
         this.stageStart();
+
+        cannon.Boss1()
+            .setPosition(cannon.SC_W * 0.5, cannon.SC_H * 0.5)
+            .addChildTo(this.enemyLayer);
     },
 
     stageStart: function() {
-        this.uiLayer.zankiLabel.setZanki(gameData.zanki);
-        this.uiLayer.scoreLabel.set(gameData.score);
-        this.uiLayer.rankLabel.set(gameData.rank);
+        this.uiLayer.scoreLabel.clearAnimation();
+        this.uiLayer.rankLabel.clearAnimation();
 
         this.backgroundLayer.removeChildren();
         this.terrainLayer.removeChildren();
         this.enemyLayer.removeChildren();
         this.bulletLayer.removeChildren();
+
+        cannon.Enemy.ACTIVES.clear();
+        cannon.Bullet.ACTIVES.clear();
+        cannon.Shot.ACTIVES.clear();
 
         fireCount = 0;
         hitCount = 0;
@@ -138,7 +156,7 @@ tm.define("cannon.GameScene", {
         cannon.Background(cannon.STAGE_DATA[this.stageIndex].background).addChildTo(this.backgroundLayer);
         cannon.Terrain(cannon.STAGE_DATA[this.stageIndex].terrain).addChildTo(this.terrainLayer);
         this.scrollSpeed = cannon.STAGE_DATA[this.stageIndex].scrollSpeed;
-        this.stageStep = cannon.STAGE_DATA[this.stageIndex].stageStep;
+        this.stageStep = cannon.STAGE_DATA[this.stageIndex].stageStep.clone();
         this.waitCount = 0;
 
         this.launchPlayer();
@@ -202,12 +220,14 @@ tm.define("cannon.GameScene", {
             this.launchEnemy(s);
             break;
         case "boss":
+            this.launchBoss(s);
             break;
         }
     },
 
     launchEnemy: function(step) {
-        var enemy = cannon.Enemy(cannon.ENEMY_DATA[step.enemyType]).addChildTo(this.enemyLayer);
+        var enemy = cannon.Zako(cannon.ENEMY_DATA[step.enemyType]).addChildTo(this.enemyLayer);
+
         switch (step.motionType) {
         case "route":
             enemy.setRoute(step.data);
@@ -240,6 +260,21 @@ tm.define("cannon.GameScene", {
         }
     },
 
+    launchBoss: function(step) {
+        var warningLabel = this.uiLayer.warningLabel;
+        warningLabel.visible = true;
+        warningLabel.alpha = 0;
+
+        var boss = tm.using(step.boss)();
+
+        this.tweener.clear()
+            .call(function(){ warningLabel.tweener.clear().fadeIn(1000) })
+            .wait(3000)
+            .call(function(){ warningLabel.tweener.clear().fadeOut(1000) })
+
+        boss.addChildTo(this.enemyLayer);
+    },
+
     testCollision: function() {
         var that = this;
         var player = this.player;
@@ -256,6 +291,7 @@ tm.define("cannon.GameScene", {
             for (var j = 0, jlen = enemies.length; j < jlen; j++) {
                 var enemy = enemies[j];
                 if (shot.isHitElement(enemy)) {
+                    console.log(enemy.hp);
                     if (!enemy.damage(cannon.SHOT_POWER)) {
                         shot.damage();
                         break;
@@ -263,12 +299,10 @@ tm.define("cannon.GameScene", {
                         var rate = Math.min(shot.killCount, 5);
 
                         var delta = [1, 2, 4, 8, 16, 32][rate] * enemy.score;
-                        gameData.addScore(delta);
-                        this.uiLayer.scoreLabel.add(delta);
+                        gameData.score += delta;
                         shot.killEnemy(enemy, this.uiLayer);
 
-                        gameData.addRank(rate);
-                        this.uiLayer.rankLabel.add(rate);
+                        gameData.rank += rate;
                     }
                 }
             }

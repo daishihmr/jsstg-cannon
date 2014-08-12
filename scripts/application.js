@@ -12,23 +12,44 @@ tm.define("cannon.Application", {
 });
 
 tm.define("cannon.GameData", {
+    superClass: "tm.event.EventDispatcher",
 
-    score: 0,
-    zanki: 0,
-    rank: 0,
+    _score: 0,
+    _zanki: 0,
+    _rank: 0,
 
     init: function() {
+        this.superInit();
+    },
+
+    initializeValues: function() {
+        this.score = 0;
         this.zanki = 3;
-        this.addScore(0);
-        this.addRank(0);
-    },
+        this.rank = 0;
+    }
+});
 
-    addScore: function(v) {
-        this.score += v;
+cannon.GameData.prototype.accessor("score", {
+    get: function(){ return this._score },
+    set: function(v) {
+        this._score = v;
+        this.flare("updatescore");
     },
+});
 
-    addRank: function(v) {
-        this.rank = Math.clamp(this.rank + v, 0, cannon.RANK_MAX);
-        bulletml.Walker.globalScope["$rank"] = this.rank * 0.001;
+cannon.GameData.prototype.accessor("zanki", {
+    get: function(){ return this._zanki },
+    set: function(v) {
+        this._zanki = v;
+        this.flare("updatezanki");
+    },
+});
+
+cannon.GameData.prototype.accessor("rank", {
+    get: function(){ return this._rank },
+    set: function(v) {
+        this._rank = Math.clamp(v, 0, cannon.RANK_MAX);
+        bulletml.Walker.globalScope["$rank"] = this._rank * 0.001;
+        this.flare("updaterank");
     },
 });

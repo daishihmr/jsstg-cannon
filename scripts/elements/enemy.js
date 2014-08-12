@@ -1,5 +1,5 @@
 tm.define("cannon.Enemy", {
-    superClass: "tm.display.Sprite",
+    superClass: "tm.display.CanvasElement",
 
     /** 素点 */
     score: 0,
@@ -9,44 +9,11 @@ tm.define("cannon.Enemy", {
     muteki: 0,
     /** 出現後画面内に入ったか */
     entered: false,
-    /** 爆発タイプ */
-    expType: 0,
     /** 出現後経過フレーム */
     age: 0,
-    /** 地形と衝突あり */
-    hasTerrainCollider: false,
-    /** 地形のスクロールと位置が同期する */
-    isGround: false,
 
-    init: function(data) {
-        this.superInit(data.texture, data.size * 2, data.size * 2);
-        this.fromJSON({
-            frameIndex: 0,
-            boundingType: "circle",
-            blendMode: "lighter",
-            radius: data.size * 0.5,
-            score: data.score,
-            hp: data.hp,
-            expType: data.expType,
-            size: data.size,
-        });
-
-        if (data.rotation === "rot") {
-            this.on("enterframe", function() {
-                this.rotation += 6;
-            });
-        } else if (data.rotation === "dir") {
-            var bx = 0;
-            var by = 0;
-            this.on("enterframe", function() {
-                this.rotation = Math.atan2(this.y - by, this.x - bx) * Math.RAD_TO_DEG;
-                bx = this.x;
-                by = this.y;
-            });
-        } else {
-            this.rotation = 0;
-            this.scaleX = -1;
-        }
+    init: function() {
+        this.superInit();
 
         this.on("added", function() {
             cannon.Enemy.ACTIVES.push(this);
@@ -58,112 +25,7 @@ tm.define("cannon.Enemy", {
         });
     },
 
-    setRoute: function(data) {
-        this.setPosition(data[0].x, data[0].y);
-        var tweener = this.tweener.clear();
-        for (var i = 0, len = data.length; i < len; i++) {
-            tweener.to(data[i], 100);
-        }
-        return this;
-    },
-
-    setSineWaveMotion: function(data) {
-        this.setPosition(data.x, data.y);
-        var a = data.ia;
-        this.on("enterframe", function() {
-            a += data.va;
-            this.x += data.vx;
-            this.y = data.y + Math.sin(a) * data.r;
-        });
-    },
-
-    setHorizontalMotion: function(data) {
-        this.setPosition(data.x, data.y);
-        if (data.vx < 0) {
-            this.scaleX = -1;
-        } else {
-            this.scaleX = 1;
-        }
-        this.on("enterframe", function() {
-            this.x += data.vx;
-        });
-    },
-
-    setHomingMotion: function(data, player) {
-        this.setPosition(data.x, data.y);
-        this.velocity = tm.geom.Vector2().setAngle(data.initialDirection, 1);
-        this.on("enterframe", function() {
-            if (this.age < 500 && this.age % 100 < 20 && this.age % 2 === 0) {
-                this.velocity
-                    .add(tm.geom.Vector2(player.x - this.x, player.y - this.y).mul(data.homing))
-                    .normalize();
-            }
-            this.position.add(tm.geom.Vector2.mul(this.velocity, data.speed));
-        });
-    },
-
-    setRunMotion: function(data) {
-        this.setPosition(data.x, data.y);
-        if (data.vx < 0) {
-            this.scaleX = -1;
-        } else {
-            this.scaleX = 1;
-        }
-        this.hasTerrainCollider = true;
-        this.isGround = true;
-        this.on("hitterrain", function(e) {
-            var c = {
-                x: this.x + e.terrain.scroll,
-                y: this.y,
-                radius: this.radius,
-            };
-            var line = e.line;
-            while (cannon.CollisionHelper.isHitCircleLine(c, line)) {
-                c.y -= data.g * 0.1;
-                this.y -= data.g * 0.1;
-            }
-        });
-        this.on("enterframe", function() {
-            this.x += data.vx;
-            this.y += data.g;
-        });
-    },
-
-    setJumpMotion: function(data) {
-        this.setPosition(data.x, data.y);
-        if (data.vx < 0) {
-            this.scaleX = -1;
-        } else {
-            this.scaleX = 1;
-        }
-        this.hasTerrainCollider = true;
-        this.isGround = true;
-        this.on("hitterrain", function(e) {
-            var c = {
-                x: this.x + e.terrain.scroll,
-                y: this.y,
-                radius: this.radius,
-            };
-            var line = e.line;
-            while (cannon.CollisionHelper.isHitCircleLine(c, line)) {
-                c.y -= data.g * 0.1;
-                this.y -= data.g * 0.1;
-                vy = data.vy;
-            }
-        });
-
-        var vy = data.g;
-        this.on("enterframe", function() {
-            this.x += data.vx;
-            this.y += vy;
-            vy += data.g;
-        });
-    },
-
     update: function(app) {
-        this.muteki = Math.max(0, this.muteki - 1);
-        this.setFrameIndex(this.muteki > 0 ? app.frame % 2 : 0);
-
         if (this.inScreen()) {
             this.entered = true;
         }
@@ -171,6 +33,8 @@ tm.define("cannon.Enemy", {
         if (!this.inScreen() && this.entered) {
             this.remove();
         }
+
+        this.muteki = Math.max(0, this.muteki - 1);
 
         this.age += 1;
     },
@@ -184,20 +48,14 @@ tm.define("cannon.Enemy", {
             this.hp -= damageValue;
             this.muteki = 10;
             if (this.hp <= 0) {
-                switch (this.expType) {
-                case 0:
-                    cannon.Explode(this.x, this.y).addChildTo(this.parent);
-                    break;
-                case 1:
-                    cannon.LargeExplode(this.x, this.y).addChildTo(this.parent);
-                    break;
-                }
-                this.remove();
+                this.destroy();
                 return true;
             }
         }
         return false;
     },
+
+    destroy: function() {},
 
     startAttack: function(root, config) {
         config = (config || {}).$safe(bulletml.runner.DEFAULT_CONFIG);
