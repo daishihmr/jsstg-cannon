@@ -9,6 +9,8 @@ var SC_W = 960;
 var SC_H = 640;
 
 cannon.app = null;
+cannon.head = null;
+cannon.foot = null;
 cannon.gameScene = null;
 
 cannon.SC_W = SC_W;

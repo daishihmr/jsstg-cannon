@@ -48,8 +48,11 @@ tm.define("cannon.Enemy", {
             this.hp -= damageValue;
             this.muteki = 10;
             if (this.hp <= 0) {
+                this.flare("destroy");
                 this.destroy();
                 return true;
+            } else if (this.hp <= cannon.SHOT_POWER) {
+                this.flare("dying");
             }
         }
         return false;
@@ -86,3 +89,6 @@ tm.define("cannon.Enemy", {
 });
 
 cannon.Enemy.ACTIVES = [];
+
+cannon.Enemy.eraseAll = function() {
+};

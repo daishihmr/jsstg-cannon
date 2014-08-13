@@ -128,10 +128,6 @@ tm.define("cannon.GameScene", {
         };
 
         this.stageStart();
-
-        cannon.Boss1()
-            .setPosition(cannon.SC_W * 0.5, cannon.SC_H * 0.5)
-            .addChildTo(this.enemyLayer);
     },
 
     stageStart: function() {
@@ -261,6 +257,7 @@ tm.define("cannon.GameScene", {
     },
 
     launchBoss: function(step) {
+        var that = this;
         var warningLabel = this.uiLayer.warningLabel;
         warningLabel.visible = true;
         warningLabel.alpha = 0;
@@ -271,8 +268,14 @@ tm.define("cannon.GameScene", {
             .call(function(){ warningLabel.tweener.clear().fadeIn(1000) })
             .wait(3000)
             .call(function(){ warningLabel.tweener.clear().fadeOut(1000) })
+            .wait(1000)
+            .call(function() {
+                boss.addChildTo(that.enemyLayer);
+            });
 
-        boss.addChildTo(this.enemyLayer);
+        boss.on("destroy", function() {
+            that.player.muteki = true;
+        });
     },
 
     testCollision: function() {
@@ -380,6 +383,7 @@ tm.define("cannon.GameScene", {
         var player = this.player;
         if (!player.parent) player.addChildTo(this.playerLayer);
 
+        player.muteki = false;
         player.controllable = false;
         player.muteki = true;
         player.direction = 1;

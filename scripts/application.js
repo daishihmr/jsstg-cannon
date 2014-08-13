@@ -3,6 +3,17 @@ tm.define("cannon.Application", {
 
     init: function(canvasId) {
         this.superInit(canvasId);
+        this.fps = 60;
+        this
+            .resize(cannon.SC_W, cannon.SC_H)
+            .fitWindow()
+            .replaceScene(cannon.LoadingScene({
+                width: cannon.SC_W,
+                height: cannon.SC_H,
+                assets: cannon.ASSETS,
+                nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
+            }));
+
         this.keyboard.element.addEventListener("keydown", function(e){
             if (37 <= e.keyCode && e.keyCode <= 40 || e.keyCode === 32) e.preventDefault();
         }, false);

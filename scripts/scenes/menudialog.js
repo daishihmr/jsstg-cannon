@@ -11,7 +11,7 @@ tm.define("cannon.MenuDialog", {
             width: cannon.SC_W,
             height: cannon.SC_H,
             backgroundColor: "hsla(200, 80%, 5%, 0.6)",
-            boxColor: "hsla(200, 80%, 10%, 0.9)",
+            boxColor: "hsla(200, 80%, 20%, 0.9)",
             cursorColor: "hsla(200, 80%, 30%, 0.9)",
             okKey: "z",
             cancelKey: "x",

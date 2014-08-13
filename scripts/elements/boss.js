@@ -14,6 +14,12 @@ tm.define("cannon.Boss", {
             });
         });
     },
+
+    setCore: function(core) {
+        this.core = core;
+        this.core.on("destroy", function() {
+        });
+    },
 });
 
 tm.define("cannon.BossPart", {
@@ -24,7 +30,7 @@ tm.define("cannon.BossPart", {
 
         this.fromJSON({
             boundingType: "circle",
-            radius: data.size * 0.2,
+            radius: data.radius,
             score: data.score,
             hp: data.hp,
             expType: data.expType,
@@ -34,33 +40,41 @@ tm.define("cannon.BossPart", {
             parentHistory: [],
             scaleX: data.scaleX,
             scaleY: data.scaleY,
-            children: [{
-                type: "tm.display.Sprite",
-                init: [data.texture, data.size * 2, data.size * 2],
-                frameIndex: 0,
-            }]
+            basicFrameIndex: 0,
+            children: {
+                body: {
+                    type: "tm.display.Sprite",
+                    init: [data.texture, data.size * 2, data.size * 2],
+                    frameIndex: 0,
+                }
+            }
+        });
+
+        var that = this;
+
+        this.body.on("enterframe", function(e) {
+            this.setFrameIndex(that.muteki > 0 ? e.app.frame % 2 : that.basicFrameIndex);
+        });
+
+        this.on("dying", function() {
+            this.basicFrameIndex = 2;
+            this.body.setFrameIndex(this.basicFrameIndex);
         });
 
         this.on("added", function() {
             this.setPosition(this.parentPart.x + this.offsetX, this.parentPart.y + this.offsetY);
             for (var i = 0; i < this.delay; i++) {
-                this.parentHistory.push({
-                    x: this.parentPart.x,
-                    y: this.parentPart.y,
-                });
+                this.parentHistory.push(this.parentPart.getFinalMatrix());
             }
         });
 
         this.on("enterframe", function() {
-            this.parentHistory.push({
-                x: this.parentPart.x,
-                y: this.parentPart.y
-            });
-            var p = this.parentHistory.shift();
-            if (p) {
-                this.x = this.offsetX + p.x;
-                this.y = this.offsetY + p.y;
-            }
+            this.parentHistory.push(this.parentPart.getFinalMatrix());
+            var m = this.parentHistory.shift();
+            var p = m.multiplyVector2({x:this.offsetX, y:this.offsetY});
+            this.x = p.x;
+            this.y = p.y;
+            this.rotation = Math.atan2(m.m10, m.m00) * Math.RAD_TO_DEG;
         });
     },
 
@@ -85,9 +99,11 @@ tm.define("cannon.Boss1", {
         this.parts = cannon.BOSS1_DATA.parts.map(function(part){ return cannon.BossPart(part) });
 
         this.tweener.to({
-            y: 150
+            y: 150,
+            rotation: -30,
         }, 2000, "easeInOutQuad").to({
-            y: 450
+            y: 450,
+            rotation: 30,
         }, 2000, "easeInOutQuad").setLoop(true);
     }
 });

@@ -208,6 +208,9 @@ cannon.STAGE_DATA[0] = {
         enemy8(2),
         enemy8(3),
 
+        enemy6f(1060, 480,-2),
+        enemy6c(-100, 160, 2),
+
         wait(200),
         enemy4(160),
         enemy4(480),
@@ -217,6 +220,9 @@ cannon.STAGE_DATA[0] = {
         enemy10(1160, 270, 1),
         enemy10(1260, 270, 0),
         enemy10(1360, 270, 1),
+
+        enemy6c(1060, 160,-2),
+        enemy6f(-100, 480, 2),
 
         wait(200),
         enemy10(1060, 370, 0),
@@ -381,7 +387,7 @@ cannon.STAGE_DATA[0] = {
         enemy5(160),
         enemy5(480),
 
-        wait(250),
+        wait(500),
         { type: "boss", boss: "cannon.Boss1" },
     ],
 };

@@ -17,6 +17,7 @@ tm.define("cannon.Zako", {
             hp: data.hp,
             expType: data.expType,
             size: data.size,
+            basicFrameIndex: 0,
             children: {
                 body: {
                     type: "tm.display.Sprite",
@@ -28,7 +29,7 @@ tm.define("cannon.Zako", {
 
         var that = this;
         this.body.on("enterframe", function(e) {
-            this.setFrameIndex(that.muteki > 0 ? e.app.frame % 2 : 0);
+            this.setFrameIndex(that.muteki > 0 ? e.app.frame % 2 : that.basicFrameIndex);
         });
 
         if (data.rotation === "rot") {
@@ -48,6 +49,11 @@ tm.define("cannon.Zako", {
             this.scaleX = -1;
             this.originY = 0.33;
         }
+
+        this.on("dying", function() {
+            this.basicFrameIndex = 2;
+            this.body.setFrameIndex(this.basicFrameIndex);
+        });
     },
 
     destroy: function() {

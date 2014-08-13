@@ -47,3 +47,6 @@ tm.define("cannon.Bullet", {
 });
 
 cannon.Bullet.ACTIVES = [];
+
+cannon.Bullet.eraseAll = function() {
+};
