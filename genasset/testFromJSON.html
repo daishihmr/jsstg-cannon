@@ -1,0 +1,41 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+</head>
+<body style="background:black">
+
+<canvas id="c"></canvas>
+<canvas id="app"></canvas>
+
+<script src="../libs/tmlib.js"></script>
+<script>
+tm.main(function() {
+    var app = tm.display.CanvasApp("#app").resize(300, 300).fitWindow();
+    app.fps = 60;
+    app.run();
+
+    var test = tm.display.CanvasElement().fromJSON({
+        x: 200,
+        scaleX: 1.5,
+        children: {
+            rect: {
+                type: "tm.display.RectangleShape",
+                init: [50, 50],
+            },
+        },
+        y: 200,
+        scaleY: 1.4,
+    });
+
+
+    test.addChildTo(app.currentScene);
+
+    console.log(test.position.x, test.position.y, test.scale.x, test.scale.y);
+    console.log(test.rect instanceof tm.display.RectangleShape);
+
+});
+</script>
+</body>
+</html>
