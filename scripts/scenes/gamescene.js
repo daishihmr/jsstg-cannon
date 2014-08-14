@@ -42,13 +42,13 @@ tm.define("cannon.GameScene", {
                     children: {
                         scoreLabel: {
                             type: "cannon.ScoreLabel",
-                            x: cannon.SC_W - 5,
+                            x: 5,
                             y: 5,
                         },
                         rankLabel: {
                             type: "cannon.RankLabel",
                             x: 5,
-                            y: 5,
+                            y: 40,
                         },
                         zankiLabel: {
                             type: "cannon.ZankiLabel",
@@ -123,7 +123,7 @@ tm.define("cannon.GameScene", {
         this.bulletmlConfig = {
             target: this.player,
             createNewBullet: function(runner, spec) {
-                cannon.Bullet(runner, spec).addChildTo(this.bulletLayer);
+                cannon.BulletMLBullet(runner, spec).addChildTo(this.bulletLayer);
             }.bind(this)
         };
 
@@ -254,6 +254,18 @@ tm.define("cannon.GameScene", {
             var a = cannon.ATTACK_DATA[attack];
             if (a) enemy.startAttack(a, this.bulletmlConfig);
         }
+
+        var that = this;
+        if (enemy.shotBack) {
+            enemy.on("destroy", function() {
+                cannon.AimBullet({
+                    target: that.player,
+                    x: this.x,
+                    y: this.y,
+                    speed: 1,
+                }).addChildTo(that.bulletLayer);
+            });
+        }
     },
 
     launchBoss: function(step) {
@@ -274,6 +286,7 @@ tm.define("cannon.GameScene", {
             });
 
         boss.on("destroy", function() {
+            console.log("boss destroy");
             that.player.muteki = true;
         });
     },

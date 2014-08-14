@@ -33,7 +33,7 @@ cannon.optionSettings = {
     bgmVolume: 0.5,
 };
 
-tm.display.Label.default.fontFamily = "OFL";
+tm.display.Label.default.fontFamily = "Orbitron";
 
 cannon.ASSETS = {
     "title": "images/title.png",

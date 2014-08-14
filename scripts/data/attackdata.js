@@ -32,7 +32,7 @@ for (var i = 0; i < 5; i++) {
 
     cannon.ATTACK_DATA["simpleA{0}".format(i)] = new bulletml.Root({
         "top": action([
-            interval(250 + i * 20),
+            interval(250 + i * 5),
             repeat(999, [
                 fire(spd(1), bullet()),
                 interval(200),
@@ -42,22 +42,22 @@ for (var i = 0; i < 5; i++) {
 
     cannon.ATTACK_DATA["simpleB{0}".format(i)] = new bulletml.Root({
         "top": action([
-            interval(250 + i * 20),
+            interval(250 + i * 5),
             repeat(999, [
                 fire(spd(1), bullet()),
-                interval(400),
+                interval(300),
             ]),
         ]),
     });
 
     cannon.ATTACK_DATA["around{0}".format(i)] = new bulletml.Root({
         "top": action([
-            interval(250 + i * 20),
+            interval(250 + i * 5),
             repeat(999, [
                 repeat(10, [
                     fire(direction(360/10, "sequence"), spd(0.8), bullet()),
                 ]),
-                interval(400),
+                interval(300),
             ]),
         ]),
     });

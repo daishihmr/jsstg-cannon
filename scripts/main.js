@@ -8,7 +8,7 @@ tm.main(function() {
         };
     }
 
-    var fonts = ["MagicRing", "OFL", "UFL"].map(function(ff) {
+    var fonts = ["MagicRing", "Orbitron", "ShareTechMono"].map(function(ff) {
         var font = { loaded: false };
 
         var tester = document.createElement("span");
