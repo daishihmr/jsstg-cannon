@@ -42,7 +42,9 @@ tm.define("cannon.AimBullet", {
 
         var rank = bulletml.Walker.globalScope["$rank"];
         var speed = spec.speed * 3 * (1 + Math.sqrt(rank) * 2);
-        var velocity = tm.geom.Vector2.sub(spec.target, spec).normalize().mul(speed);
+        var velocity = tm.geom.Vector2.sub(spec.target, spec)
+        velocity.setAngle(velocity.toAngle() * Math.RAD_TO_DEG + (spec.direction || 0));
+        velocity.normalize().mul(speed);
         this.on("enterframe", function() {
             this.position.add(velocity);
         });

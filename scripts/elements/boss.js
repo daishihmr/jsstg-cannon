@@ -13,6 +13,8 @@ tm.define("cannon.Boss", {
                 part.addChildTo(that.parent);
             });
         });
+
+        this.muteki = false;
     },
 
     setCore: function(core) {
@@ -21,6 +23,14 @@ tm.define("cannon.Boss", {
         });
     },
 });
+
+cannon.Boss.prototype.accessor("muteki", {
+    get: function(){ return this._muteki },
+    set: function(v) {
+        this.parts.forEach(function(part){ part.muteki = (v ? 9999 : 0) });
+        this._muteki = v;
+    }
+})
 
 tm.define("cannon.BossPart", {
     superClass: "cannon.Enemy",
@@ -181,7 +191,23 @@ tm.define("cannon.Boss1", {
                     x: gunPos.x,
                     y: gunPos.y,
                     direction: 0,
-                    speed: 3,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.AimBullet({
+                    color: 2,
+                    target: scene.player,
+                    x: gunPos.x,
+                    y: gunPos.y,
+                    direction: -30,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.AimBullet({
+                    color: 2,
+                    target: scene.player,
+                    x: gunPos.x,
+                    y: gunPos.y,
+                    direction: +30,
+                    speed: 2,
                 }).addChildTo(scene.bulletLayer);
             }
         });
@@ -190,22 +216,30 @@ tm.define("cannon.Boss1", {
     motionDamage: function(part) {
         this.motions.clear();
 
+        this.muteki = true;
         var rot = this.rotation + (part.offsetY < 0 ? -30 : 30);
         this.tweener.clear()
             .to({
                 x: Math.clamp(this.x + 100, cannon.SC_W * 0.05, cannon.SC_W * 0.95),
                 rotation: rot
             }, 800, "easeOutBack")
-            .call(function(){ this.next() }.bind(this));
+            .call(function() {
+                this.muteki = false;
+                this.next();
+            }.bind(this));
     },
 
     motion0: function() {
+        this.muteki = true;
         this.tweener.clear()
             .to({
                 x: cannon.SC_W * 0.75,
                 y: cannon.SC_H * 0.5,
             }, 2500, "easeInOutBack")
-            .call(function(){ this.next() }.bind(this));
+            .call(function() {
+                this.muteki = false;
+                this.next();
+            }.bind(this));
     },
 
     motion1: function() {
@@ -261,7 +295,7 @@ tm.define("cannon.Boss1", {
             .to({
                 x: cannon.SC_W * 0.80,
                 y: cannon.SC_H * 0.25,
-                rotation: 180,
+                rotation: 180 + -30,
             }, 1600, "easeInOutBack")
             .call(function(){ this.attack1() }.bind(this)).wait(100)
             .call(function(){ this.attack1() }.bind(this)).wait(100)
@@ -270,7 +304,7 @@ tm.define("cannon.Boss1", {
             .to({
                 x: cannon.SC_W * 0.80,
                 y: cannon.SC_H * 0.75,
-                rotation: 180,
+                rotation: 180 + +30,
             }, 1600, "easeInOutBack")
             .call(function(){ this.attack1() }.bind(this)).wait(100)
             .call(function(){ this.attack1() }.bind(this)).wait(100)
