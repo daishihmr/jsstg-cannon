@@ -214,9 +214,16 @@ tm.define("cannon.Boss1", {
     },
 
     motionDamage: function(part) {
-        this.motions.clear();
-
         this.muteki = true;
+
+        if (this.parts[0].parent == null && this.parts[2].parent == null) {
+            this.motions.eraseAll(this.motion1);
+            this.motions.eraseAll(this.motion3);
+        }
+        if (this.parts[1].parent == null && this.parts[3].parent == null) {
+            this.motions.eraseAll(this.motion2);
+        }
+
         var rot = this.rotation + (part.offsetY < 0 ? -30 : 30);
         this.tweener.clear()
             .to({

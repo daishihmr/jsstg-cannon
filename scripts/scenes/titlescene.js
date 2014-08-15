@@ -23,7 +23,8 @@ tm.define("cannon.TitleScene", {
                     init: ["title", cannon.SC_H, cannon.SC_H],
                     x: cannon.SC_W * 0.5,
                     y: cannon.SC_H * 0.5,
-                    onenterframe: function(e){ this.alpha = 0.75 + Math.sin(age * 0.03) * 0.25 },
+                    alpha: 0.2,
+                    onenterframe: function(e){ this.alpha = 0.6 + Math.sin(Math.PI * -0.5 + age * 0.01) * 0.4 },
                 },
                 pre: {
                     type: "tm.display.Label",

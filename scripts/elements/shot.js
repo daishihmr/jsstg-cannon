@@ -11,6 +11,7 @@ tm.define("cannon.Shot", {
 
         this.boundingType = "circle";
         this.radius = cannon.SHOT_RADIUS;
+        this.vsTerrainRadius = cannon.SHOT_RADIUS * 0.25;
 
         var that = this;
 

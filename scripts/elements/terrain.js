@@ -29,7 +29,7 @@ tm.define("cannon.Terrain", {
         var c = {
             x: target.x + this.scroll,
             y: target.y,
-            radius: target.radius,
+            radius: target.vsTerrainRadius || target.radius,
         };
         var lines = this.lines;
         var scroll = this.scroll;
