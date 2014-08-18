@@ -35,7 +35,7 @@ for (var i = 0; i < 5; i++) {
             interval(250 + i * 5),
             repeat(999, [
                 fire(spd(1), bullet()),
-                interval(200),
+                interval(300),
             ]),
         ]),
     });
@@ -45,6 +45,10 @@ for (var i = 0; i < 5; i++) {
             interval(250 + i * 5),
             repeat(999, [
                 fire(spd(1), bullet()),
+                repeat(3, [
+                    fire(direction(0, "sequence"), spd(1), bullet()),
+                    wait(5),
+                ]),
                 interval(300),
             ]),
         ]),

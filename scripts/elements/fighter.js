@@ -122,6 +122,8 @@ tm.define("cannon.Fighter", {
     boostOn: function() {
         this.backfire.alpha = this.backfire2.alpha = 1.0;
         this.backfire.visible = this.backfire2.visible = true;
+        this.backfire.tweener.clear();
+        this.backfire2.tweener.clear();
     },
 
     boostOff: function() {
