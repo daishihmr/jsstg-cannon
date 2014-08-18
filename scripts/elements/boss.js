@@ -112,7 +112,7 @@ tm.define("cannon.Boss1", {
         this.fromJSON({
             x: cannon.SC_W * 1.2,
             y: cannon.SC_H * 0.5,
-            rotation: 180,
+            rotation: -180,
             parts: cannon.BOSS1_DATA.parts.map(function(part){ return cannon.BossPart(part) }),
         });
 
@@ -124,6 +124,8 @@ tm.define("cannon.Boss1", {
         ];
         this.phase2 = [
             this.motion4,
+            this.motion5,
+            this.motion6,
         ];
 
         this.motions = [
@@ -139,21 +141,14 @@ tm.define("cannon.Boss1", {
         this.on("destroyPart", function(ev) {
             this.motionDamage(ev.part);
         });
+
+        this.on("destroy", function() {
+            this.fireOff();
+        });
     },
 
     next: function() {
         if (this.motions.length === 0) {
-            if (this.parts[0].parent == null && this.parts[2].parent == null) {
-                this.phase1.eraseAll(this.motion1);
-                this.phase1.eraseAll(this.motion3);
-            }
-            if (this.parts[1].parent == null && this.parts[3].parent == null) {
-                this.phase1.eraseAll(this.motion2);
-            }
-
-            if (this.phase1.length === 0) {
-                this.phase1 = this.phase2;
-            }
             Array.prototype.push.apply(this.motions, this.phase1);
         }
         this.motions.shift().call(this);
@@ -213,15 +208,38 @@ tm.define("cannon.Boss1", {
         });
     },
 
+    attack2: function() {
+        var that = this;
+        var scene = this.getRoot();
+        for (var i = 0; i < 360; i += 10) {
+            cannon.AimBullet({
+                color: 2,
+                target: scene.player,
+                x: this.x,
+                y: this.y,
+                direction: i,
+                speed: 2,
+            }).addChildTo(scene.bulletLayer);
+        }
+    },
+
     motionDamage: function(part) {
         this.muteki = true;
 
         if (this.parts[0].parent == null && this.parts[2].parent == null) {
             this.motions.eraseAll(this.motion1);
             this.motions.eraseAll(this.motion3);
+            this.phase1.eraseAll(this.motion1);
+            this.phase1.eraseAll(this.motion3);
         }
         if (this.parts[1].parent == null && this.parts[3].parent == null) {
             this.motions.eraseAll(this.motion2);
+            this.phase1.eraseAll(this.motion2);
+        }
+
+        if (this.phase1.length === 0) {
+            this.phase1 = this.phase2;
+            this.motions.push(this.motion0);
         }
 
         var rot = this.rotation + (part.offsetY < 0 ? -30 : 30);
@@ -242,6 +260,7 @@ tm.define("cannon.Boss1", {
             .to({
                 x: cannon.SC_W * 0.75,
                 y: cannon.SC_H * 0.5,
+                rotation: 180,
             }, 2500, "easeInOutBack")
             .call(function() {
                 this.muteki = false;
@@ -359,12 +378,64 @@ tm.define("cannon.Boss1", {
             .call(function(){ this.next() }.bind(this));
     },
 
+    fireOn: function() {
+        var scene = this.getRoot();
+        this.autoFire = this.autoFire || function(e) {
+            if (e.app.frame % 5 === 0) {
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation - 5,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation + 5,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+            }
+        };
+        this.on("enterframe", this.autoFire);
+    },
+    fireOff: function() {
+        this.off("enterframe", this.autoFire);
+    },
+
     motion4: function() {
+        this.fireOn();
         this.tweener.clear()
             .by({
-                rotation: 360,
-            }, 1600, "easeInOutBack")
+                rotation: 720,
+            }, 3000, "easeInOutBack")
+            .call(function(){ this.fireOff() }.bind(this))
+            .call(function(){ this.next() }.bind(this));
+    },
 
+    motion5: function() {
+        this.tweener.clear()
+            .wait(30)
+            .call(function(){ this.attack2() }.bind(this))
+            .wait(30)
+            .call(function(){ this.attack2() }.bind(this))
+            .wait(30)
+            .call(function(){ this.attack2() }.bind(this))
+            .call(function(){ this.next() }.bind(this));
+    },
+
+    motion6: function() {
+        this.fireOn();
+        this.tweener.clear()
+            .by({
+                rotation: -720,
+            }, 3000, "easeInOutBack")
+            .call(function(){ this.fireOff() }.bind(this))
             .call(function(){ this.next() }.bind(this));
     },
 });

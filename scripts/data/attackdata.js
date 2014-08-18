@@ -46,8 +46,8 @@ for (var i = 0; i < 5; i++) {
             repeat(999, [
                 fire(spd(1), bullet()),
                 repeat(3, [
-                    fire(direction(0, "sequence"), spd(1), bullet()),
-                    wait(5),
+                    fire(spd(1), bullet()),
+                    wait(15),
                 ]),
                 interval(300),
             ]),
@@ -97,4 +97,3 @@ cannon.ATTACK_DATA["4way"] = new bulletml.Root({
 });
 
 })();
-

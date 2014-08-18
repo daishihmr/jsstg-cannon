@@ -18,10 +18,10 @@ cannon.ENEMY_DATA = [
 
 cannon.BOSS1_DATA = {
     parts: [
-        { texture: "boss1_2", size: 128, radius: 40, score: 500, hp: 29, expType: 1, x:   80, y:   80, scaleX:1.3, scaleY: 1.3, delay: 5 },
-        { texture: "boss1_3", size: 128, radius: 40, score: 500, hp: 29, expType: 1, x:  -40, y:  140, scaleX:1.3, scaleY: 1.3, delay:10 },
-        { texture: "boss1_2", size: 128, radius: 40, score: 500, hp: 29, expType: 1, x:   80, y:  -80, scaleX:1.3, scaleY:-1.3, delay: 5 },
-        { texture: "boss1_3", size: 128, radius: 40, score: 500, hp: 29, expType: 1, x:  -40, y: -140, scaleX:1.3, scaleY:-1.3, delay:10 },
-        { texture: "boss1_1", size: 128, radius: 40, score: 500, hp: 29, expType: 1, x:    0, y:    0, scaleX:1.7, scaleY: 1.7, delay: 0 },
+        { texture: "boss1_2", size: 128, radius: 40, score: 500, hp: 30, expType: 1, x:   80, y:   80, scaleX:1.3, scaleY: 1.3, delay: 5 },
+        { texture: "boss1_3", size: 128, radius: 40, score: 500, hp: 30, expType: 1, x:  -40, y:  140, scaleX:1.3, scaleY: 1.3, delay:10 },
+        { texture: "boss1_2", size: 128, radius: 40, score: 500, hp: 30, expType: 1, x:   80, y:  -80, scaleX:1.3, scaleY:-1.3, delay: 5 },
+        { texture: "boss1_3", size: 128, radius: 40, score: 500, hp: 30, expType: 1, x:  -40, y: -140, scaleX:1.3, scaleY:-1.3, delay:10 },
+        { texture: "boss1_1", size: 128, radius: 40, score: 500, hp: 50, expType: 1, x:    0, y:    0, scaleX:1.7, scaleY: 1.7, delay: 0 },
     ],
 };
