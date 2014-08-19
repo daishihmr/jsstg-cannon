@@ -2,9 +2,7 @@
 
 var gameData = null;
 
-var fireCount = 0;
-var hitCount = 0;
-var comboCount = [0, 0, 0, 0, 0];
+var comboCount = [0, 0, 0, 0, 0, 0];
 
 tm.define("cannon.GameScene", {
     superClass: "tm.app.Scene",
@@ -80,7 +78,14 @@ tm.define("cannon.GameScene", {
                                 onenterframe: function(e){ this.alpha = 0.6 + Math.sin(e.app.frame * 0.2) * 0.4 },
                             }],
                         },
-                    }
+                        bossBattleTimeLabel: {
+                            type: "cannon.CountDownLabel",
+                            init: 60 * 1000,
+                            x: cannon.SC_W - 5,
+                            y: 5,
+                            visible: false,
+                        },
+                    },
                 },
             },
         });
@@ -143,9 +148,7 @@ tm.define("cannon.GameScene", {
         cannon.Bullet.ACTIVES.clear();
         cannon.Shot.ACTIVES.clear();
 
-        fireCount = 0;
-        hitCount = 0;
-        comboCount = 0;
+        comboCount = [0, 0, 0, 0, 0, 0];
 
         this.mt = new MersenneTwister(1000 + this.stageIndex);
 
@@ -162,9 +165,8 @@ tm.define("cannon.GameScene", {
         var that = this;
         var resultScene = cannon.ResultScene({
             gameData: gameData,
-            fireCount: fireCount,
-            hitCount: hitCount,
             comboCount: comboCount,
+            bossBattleTime: this.uiLayer.bossBattleTimeLabel.time,
         });
         resultScene.on("finish", function() {
             that.stageIndex += 1;
@@ -275,6 +277,18 @@ tm.define("cannon.GameScene", {
         warningLabel.alpha = 0;
 
         var boss = tm.using(step.boss)();
+        var bossBattleTimeLabel = this.uiLayer.bossBattleTimeLabel;
+
+        bossBattleTimeLabel.on("timeup", function() {
+            boss.muteki = true;
+            boss.tweener.clear()
+                .to({
+                    x: cannon.SC_W * 1.5
+                }, 3000, "easeInQuad")
+                .call(function() {
+                    boss.remove();
+                });
+        });
 
         this.tweener.clear()
             .call(function(){ warningLabel.tweener.clear().fadeIn(1000) })
@@ -282,12 +296,23 @@ tm.define("cannon.GameScene", {
             .call(function(){ warningLabel.tweener.clear().fadeOut(1000) })
             .wait(1000)
             .call(function() {
+                bossBattleTimeLabel.x += 100;
+                bossBattleTimeLabel.visible = true;
+                bossBattleTimeLabel.tweener.clear()
+                    .by({
+                        x: -100
+                    }, 500, "easeOutBack")
+                    .call(function(){ bossBattleTimeLabel.start() });
                 boss.addChildTo(that.enemyLayer);
             });
 
         boss.on("destroy", function() {
-            console.log("boss destroy");
             that.player.muteki = true;
+            bossBattleTimeLabel.stop();
+        });
+        boss.on("removed", function() {
+            that.player.muteki = true;
+            that.stageClear();
         });
     },
 
@@ -314,6 +339,7 @@ tm.define("cannon.GameScene", {
                     } else {
                         var rate = Math.min(shot.killCount, 5);
 
+                        comboCount[rate] += 1;
                         var delta = [1, 2, 4, 8, 16, 32][rate] * enemy.score;
                         gameData.score += delta;
                         shot.killEnemy(enemy, this.uiLayer);

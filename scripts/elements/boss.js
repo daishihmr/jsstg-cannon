@@ -18,8 +18,10 @@ tm.define("cannon.Boss", {
     },
 
     setCore: function(core) {
+        var that = this;
         this.core = core;
         this.core.on("destroy", function() {
+            that.flare("destroy");
         });
     },
 });
@@ -30,7 +32,7 @@ cannon.Boss.prototype.accessor("muteki", {
         this.parts.forEach(function(part){ part.muteki = (v ? 9999 : 0) });
         this._muteki = v;
     }
-})
+});
 
 tm.define("cannon.BossPart", {
     superClass: "cannon.Enemy",
@@ -88,7 +90,7 @@ tm.define("cannon.BossPart", {
         });
     },
 
-    destroy: function() {
+    destroy: function(byDamage) {
         switch (this.expType) {
         case 0:
             cannon.Explode(this.x, this.y).addChildTo(this.parent);
@@ -98,9 +100,12 @@ tm.define("cannon.BossPart", {
             break;
         }
         this.remove();
-        var ev = tm.event.Event("destroyPart");
-        ev.part = this;
-        this.parentPart.fire(ev);
+
+        if (byDamage) {
+            var ev = tm.event.Event("destroyPart");
+            ev.part = this;
+            this.parentPart.fire(ev);
+        }
     },
 });
 
@@ -127,6 +132,7 @@ tm.define("cannon.Boss1", {
             this.motion5,
             this.motion6,
         ];
+        this.currentPhase = this.phase1;
 
         this.motions = [
             this.motion0,
@@ -135,21 +141,31 @@ tm.define("cannon.Boss1", {
         this.next();
 
         var that = this;
-        this.parts[4].on("destroy", function() {
-            that.flare("destroy");
-        });
+        this.setCore(this.parts[4]);
+
         this.on("destroyPart", function(ev) {
             this.motionDamage(ev.part);
         });
 
         this.on("destroy", function() {
             this.fireOff();
+            var core = this.core;
+            this.parts.forEach(function(part) {
+                if (part !== core && part.parent) part.destroy(false);
+            });
+
+            // TODO 爆破演出
+            this.tweener.clear()
+                .wait(100)
+                .call(function() {
+                    this.remove();
+                }.bind(this));
         });
     },
 
     next: function() {
         if (this.motions.length === 0) {
-            Array.prototype.push.apply(this.motions, this.phase1);
+            Array.prototype.push.apply(this.motions, this.currentPhase);
         }
         this.motions.shift().call(this);
     },
@@ -224,8 +240,6 @@ tm.define("cannon.Boss1", {
     },
 
     motionDamage: function(part) {
-        this.muteki = true;
-
         if (this.parts[0].parent == null && this.parts[2].parent == null) {
             this.motions.eraseAll(this.motion1);
             this.motions.eraseAll(this.motion3);
@@ -237,8 +251,10 @@ tm.define("cannon.Boss1", {
             this.phase1.eraseAll(this.motion2);
         }
 
-        if (this.phase1.length === 0) {
-            this.phase1 = this.phase2;
+        if (this.core.parent == null) {
+            return;
+        } else if (this.parts[0].parent == null && this.parts[1].parent == null && this.parts[2].parent == null && this.parts[3].parent == null) {
+            this.currentPhase = this.phase2;
             this.motions.push(this.motion0);
         }
 
@@ -247,7 +263,9 @@ tm.define("cannon.Boss1", {
             .to({
                 x: Math.clamp(this.x + 100, cannon.SC_W * 0.05, cannon.SC_W * 0.95),
                 rotation: rot
-            }, 800, "easeOutBack")
+            }, 500, "easeOutQuad")
+            .call(function(){ this.muteki = true }.bind(this))
+            .wait(500)
             .call(function() {
                 this.muteki = false;
                 this.next();

@@ -11,7 +11,8 @@ tm.define("cannon.Application", {
                 width: cannon.SC_W,
                 height: cannon.SC_H,
                 assets: cannon.ASSETS,
-                nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
+                // nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
+                nextScene: cannon.ResultScene,
             }));
 
         this.keyboard.element.addEventListener("keydown", function(e){

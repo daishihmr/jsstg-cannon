@@ -51,7 +51,7 @@ tm.define("cannon.Enemy", {
             this.muteki = 10;
             if (this.hp <= 0) {
                 this.flare("destroy");
-                this.destroy();
+                this.destroy(true);
                 return true;
             } else if (this.hp <= cannon.SHOT_POWER) {
                 this.flare("dying");
@@ -60,7 +60,7 @@ tm.define("cannon.Enemy", {
         return false;
     },
 
-    destroy: function() {},
+    destroy: function(byDamage) {},
 
     startAttack: function(root, config) {
         config = (config || {}).$safe(bulletml.runner.DEFAULT_CONFIG);
