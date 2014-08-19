@@ -156,7 +156,7 @@ tm.define("cannon.Boss1", {
 
             // TODO 爆破演出
             this.tweener.clear()
-                .wait(100)
+                .wait(5000)
                 .call(function() {
                     this.remove();
                 }.bind(this));

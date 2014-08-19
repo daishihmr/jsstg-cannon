@@ -61,6 +61,7 @@ cannon.ASSETS = {
     "sounds/shot": "sounds/gun2.mp3",
     "sounds/explode0": "sounds/sen_ge_taihou03.mp3",
     "sounds/explode1": "sounds/sen_ge_bom14.mp3",
+    "sounds/pi": "sounds/se_maoudamashii_system26.mp3",
 };
 Array.range(0, 14 + 1).forEach(function(i) {
     cannon.ASSETS["enemy{0}".format(i)] = "images/enemy{0}.png".format(i);

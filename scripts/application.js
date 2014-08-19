@@ -11,8 +11,8 @@ tm.define("cannon.Application", {
                 width: cannon.SC_W,
                 height: cannon.SC_H,
                 assets: cannon.ASSETS,
-                // nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
-                nextScene: cannon.ResultScene,
+                nextScene: cannon.onAssetsLoaded(cannon.TitleScene),
+                // nextScene: cannon.ResultScene,
             }));
 
         this.keyboard.element.addEventListener("keydown", function(e){
@@ -44,7 +44,13 @@ tm.define("cannon.GameData", {
 cannon.GameData.prototype.accessor("score", {
     get: function(){ return this._score },
     set: function(v) {
+        var before = this._score;
         this._score = v;
+
+        // TODO エクステンド判定
+        if (before < 50000 && 50000 <= v) {
+            cannon.playSe("shot");
+        }
         this.flare("updatescore");
     },
 });

@@ -3,6 +3,9 @@
 var gameData = null;
 
 var comboCount = [0, 0, 0, 0, 0, 0];
+var enemyCount = 0;
+var destroyCount = 0;
+var noMiss = true;
 
 tm.define("cannon.GameScene", {
     superClass: "tm.app.Scene",
@@ -123,6 +126,8 @@ tm.define("cannon.GameScene", {
             that.tweener.clear().wait(500).call(function() {
                 that.launchPlayer();
             });
+
+            noMiss = false;
         });
 
         this.bulletmlConfig = {
@@ -149,6 +154,9 @@ tm.define("cannon.GameScene", {
         cannon.Shot.ACTIVES.clear();
 
         comboCount = [0, 0, 0, 0, 0, 0];
+        enemyCount = 0;
+        destroyCount = 0;
+        noMiss = true;
 
         this.mt = new MersenneTwister(1000 + this.stageIndex);
 
@@ -166,7 +174,10 @@ tm.define("cannon.GameScene", {
         var resultScene = cannon.ResultScene({
             gameData: gameData,
             comboCount: comboCount,
+            killRatio: destroyCount / enemyCount,
             bossBattleTime: this.uiLayer.bossBattleTimeLabel.time,
+            perfectBonus: (destroyCount / enemyCount >= 1) ? 10000 : 0,
+            noMissBonus: noMiss ? 10000 : 0,
         });
         resultScene.on("finish", function() {
             that.stageIndex += 1;
@@ -268,6 +279,11 @@ tm.define("cannon.GameScene", {
                 }).addChildTo(that.bulletLayer);
             });
         }
+
+        enemyCount += 1;
+        enemy.on("destroy", function() {
+            destroyCount += 1;
+        });
     },
 
     launchBoss: function(step) {
@@ -313,6 +329,11 @@ tm.define("cannon.GameScene", {
         boss.on("removed", function() {
             that.player.muteki = true;
             that.stageClear();
+        });
+
+        enemyCount += 1;
+        boss.on("destroy", function() {
+            destroyCount += 1;
         });
     },
 
