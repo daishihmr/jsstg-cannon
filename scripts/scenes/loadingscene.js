@@ -4,10 +4,7 @@ tm.define("cannon.LoadingScene", {
     init: function() {
         this.superInit.apply(this, arguments);
 
-        // 背景クリア
-        this.stage.draw = function(canvas) {
-            canvas.clear(0, 0, cannon.SC_W, cannon.SC_H);
-        };
+        this.stage.bg.canvas.setFillStyle("black").fillRect(0, 0, cannon.SC_W, cannon.SC_H);
 
         for (var i = 0; i < 10; i++) {
             this._createHiyoko(this.param)

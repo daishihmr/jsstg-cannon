@@ -15,7 +15,7 @@ tm.define("cannon.ResultScene", {
                 bg: {
                     type: "tm.display.RectangleShape",
                     init: [cannon.SC_W, cannon.SC_H, {
-                        fillStyle: "rgb(0, 0, 0)",
+                        fillStyle: "hsla(200, 20%, 20%, 0.75)",
                         strokeStyle: "transparent",
                     }],
                     originX: 0, originY: 0,
@@ -23,7 +23,7 @@ tm.define("cannon.ResultScene", {
                 },
                 scoreLabel: {
                     type: "tm.display.Label",
-                    init: ["", 20],
+                    init: ["", 28],
                     align: "right",
                     fontFamily: "ShareTechMono",
                     baseline: "middle",
@@ -44,7 +44,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo1: {
                             type: "tm.display.Label",
-                            init: ["combo x1", 20],
+                            init: ["combo x1", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -52,7 +52,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo2: {
                             type: "tm.display.Label",
-                            init: ["combo x2", 20],
+                            init: ["combo x2", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -60,7 +60,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo3: {
                             type: "tm.display.Label",
-                            init: ["combo x4", 20],
+                            init: ["combo x4", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -68,7 +68,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo4: {
                             type: "tm.display.Label",
-                            init: ["combo x8", 20],
+                            init: ["combo x8", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -76,7 +76,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo5: {
                             type: "tm.display.Label",
-                            init: ["combo x16", 20],
+                            init: ["combo x16", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -84,7 +84,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo6: {
                             type: "tm.display.Label",
-                            init: ["combo x32", 20],
+                            init: ["combo x32", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -100,7 +100,7 @@ tm.define("cannon.ResultScene", {
                         },
                         bossBattleTime: {
                             type: "tm.display.Label",
-                            init: ["boss battle time", 20],
+                            init: ["boss battle time", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -108,7 +108,7 @@ tm.define("cannon.ResultScene", {
                         },
                         perfect: {
                             type: "tm.display.Label",
-                            init: ["100% destroy", 20],
+                            init: ["100% destroy", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -116,7 +116,7 @@ tm.define("cannon.ResultScene", {
                         },
                         noMiss: {
                             type: "tm.display.Label",
-                            init: ["no miss", 20],
+                            init: ["no miss", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -124,7 +124,7 @@ tm.define("cannon.ResultScene", {
                         },
                         score: {
                             type: "tm.display.Label",
-                            init: ["score", 20],
+                            init: ["score", 28],
                             align: "left",
                             baseline: "middle",
                             x: cannon.SC_W * 0.3,
@@ -137,7 +137,7 @@ tm.define("cannon.ResultScene", {
                     children: {
                         combo1: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[0]), 20],
+                            init: ["" + (clearData.comboCount[0]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -147,7 +147,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo2: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[1]), 20],
+                            init: ["" + (clearData.comboCount[1]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -157,7 +157,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo3: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[2]), 20],
+                            init: ["" + (clearData.comboCount[2]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -167,7 +167,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo4: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[3]), 20],
+                            init: ["" + (clearData.comboCount[3]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -177,7 +177,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo5: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[4]), 20],
+                            init: ["" + (clearData.comboCount[4]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -187,7 +187,7 @@ tm.define("cannon.ResultScene", {
                         },
                         combo6: {
                             type: "tm.display.Label",
-                            init: ["" + (clearData.comboCount[5]), 20],
+                            init: ["" + (clearData.comboCount[5]), 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -197,7 +197,7 @@ tm.define("cannon.ResultScene", {
                         },
                         bossBattleTime: {
                             type: "tm.display.Label",
-                            init: ["", 20],
+                            init: ["", 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -208,7 +208,7 @@ tm.define("cannon.ResultScene", {
                         },
                         perfect: {
                             type: "tm.display.Label",
-                            init: ["", 20],
+                            init: ["", 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
@@ -219,7 +219,7 @@ tm.define("cannon.ResultScene", {
                         },
                         noMiss: {
                             type: "tm.display.Label",
-                            init: ["", 20],
+                            init: ["", 28],
                             align: "right",
                             fontFamily: "ShareTechMono",
                             baseline: "middle",
