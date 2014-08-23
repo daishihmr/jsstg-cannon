@@ -1,5 +1,8 @@
 (function() {
 
+/**
+ * tm.display.CanvasAppをWebGL化する
+ */
 tm.define("WebGLise", {
 
     init: function(app) {
@@ -69,6 +72,9 @@ tm.define("WebGLise", {
             matMvp: gl.getUniformLocation(program, "matMvp"),
             texture: gl.getUniformLocation(program, "texture"),
             labelAreaHeight: gl.getUniformLocation(program, "labelAreaHeight"),
+            strength: gl.getUniformLocation(program, "strength"),
+            centerOffset: gl.getUniformLocation(program, "centerOffset"),
+            lightRadius: gl.getUniformLocation(program, "lightRadius"),
         };
 
         var positionData = [
@@ -103,6 +109,8 @@ tm.define("WebGLise", {
 
         var texture = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
         var matM = mat4.create();
         var matV = mat4.create();
@@ -118,12 +126,27 @@ tm.define("WebGLise", {
         var render = function() {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+            if (params.quake > 0.0) {
+                mat4.identity(matM);
+                mat4.translate(matM, matM, [Math.randf(-params.quake * 0.01, params.quake * 0.01), Math.randf(-params.quake * 0.01, params.quake * 0.01), 0]);
+                mat4.rotateZ(matM, matM, Math.randf(-params.quake * 0.01, params.quake * 0.01));
+                mat4.multiply(matMvp, matP, matV);
+                mat4.multiply(matMvp, matM, matMvp);
+                gl.uniformMatrix4fv(uniformLocation.matMvp, false, matMvp);
+                mat4.identity(matM);
+            }
+
             ctex.drawImage(app.element, 0, 0, app.width, app.height, 0, 0, ctex.width, ctex.height);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ctex.element);
             gl.generateMipmap(gl.TEXTURE_2D);
             gl.uniform1i(uniformLocation.texture, 0);
 
-            gl.uniform1f(uniformLocation.labelAreaHeight, params.labelAreaHeight)
+            gl.uniform1f(uniformLocation.labelAreaHeight, params.labelAreaHeight);
+
+            gl.uniform1f(uniformLocation.strength, params.strength);
+            gl.uniform2fv(uniformLocation.centerOffset, params.centerOffset);
+
+            gl.uniform1f(uniformLocation.lightRadius, params.lightRadius);
 
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             gl.flush();
@@ -153,23 +176,57 @@ precision mediump float;
 
 uniform sampler2D texture;
 uniform float labelAreaHeight;
+uniform float strength;
+uniform vec2 centerOffset;
+uniform float lightRadius;
+
 varying vec4 vColor;
 varying vec2 vTexCoord;
 
-const float seed = 604.361;
-float rnd(){
+const float tFragX = 1.0 / 960.0;
+const float tFragY = 1.0 / 640.0;
+const float nFrag = 1.0 / 30.0;
+// const vec2 centerOffset = vec2(960.0 / 2.0, 640.0 / 2.0);
+
+float rnd(float seed){
     return fract(sin(dot(gl_FragCoord.stp + seed, vec3(12.9898, 78.233, 151.7182))) * 43758.5453 + seed);
 }
 
 void main(void) {
     vec4 result;
-    vec4 sample = texture2D(texture, vTexCoord);
+
+    vec2 fc = vec2(gl_FragCoord.x, 640.0 - gl_FragCoord.y);
+    vec2 fcc = fc - centerOffset;
+
+    vec4 blured;
+    if (strength > 0.001) {
+        vec3 temp = vec3(0.0);
+        float random = rnd(604.361);
+        float totalWeight = 0.0;
+
+        for(float i = 0.0; i <= 30.0; i++){
+            float percent = (i + random) * nFrag;
+            float weight = percent - percent * percent;
+            vec2 t = fc - fcc * percent * strength * nFrag;
+            temp += texture2D(texture, vec2(t.x * tFragX, t.y * tFragY)).rgb * weight;
+            totalWeight += weight;
+        }
+        blured = vec4(temp / totalWeight, 1.0);
+    } else {
+        blured = texture2D(texture, vTexCoord);
+    }
+
+    if (lightRadius > 0.001) {
+        float addition = clamp((lightRadius - length(fcc)) / lightRadius, 0.0, 1.0);
+        blured += vec4(vec3(addition), 0.0);
+        blured += vec4(vec3(addition), 0.0);
+    }
 
     if (320.0 - labelAreaHeight <= gl_FragCoord.y && gl_FragCoord.y < 320.0 + labelAreaHeight) {
-        vec3 neg = vec3(sample.r, 1.0 - sample.g, 1.0 - sample.b);
-        result = vec4(neg.r * 0.48, neg.g * 0.05, neg.b * 0.08, sample.a);
+        vec3 neg = vec3(1.0 - blured.r, 1.0 - blured.g, 1.0 - blured.b);
+        result = vec4(neg.r * 0.48, neg.g * 0.05, neg.b * 0.08, blured.a);
     } else {
-        result = sample;
+        result = blured;
     }
 
     gl_FragColor = result;

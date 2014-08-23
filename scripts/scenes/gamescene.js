@@ -119,6 +119,13 @@ tm.define("cannon.GameScene", {
 
         this.player = this.playerLayer.player;
         this.player.on("killed", function() {
+            var t = tm.app.Tweener(that.webglParams)
+                .set({ quake:6 })
+                .to({ quake:0 }, 600)
+                .on("finish", function(){ that.off("enterframe", tt) });
+            var tt = function(e){ t.update(e.app) };
+            that.on("enterframe", tt);
+
             gameData.zanki -= 1;
             if (gameData.zanki <= 0) {
                 that.gameover();
@@ -175,6 +182,8 @@ tm.define("cannon.GameScene", {
 
     stageClear: function() {
         var that = this;
+        this.uiLayer.scoreLabel.animation = false;
+        this.uiLayer.rankLabel.animation = false;
         var resultScene = cannon.ResultScene({
             gameData: gameData,
             comboCount: comboCount,
@@ -184,6 +193,12 @@ tm.define("cannon.GameScene", {
             noMissBonus: noMiss ? 10000 : 0,
         });
         resultScene.on("finish", function() {
+            that.uiLayer.scoreLabel.animation = true;
+            that.uiLayer.rankLabel.animation = true;
+
+            // this.app.popScene();
+            this.remove();
+
             that.stageIndex += 1;
             if (that.stageIndex < cannon.STAGE_COUNT) {
                 that.stageStart();
@@ -191,7 +206,8 @@ tm.define("cannon.GameScene", {
                 that.app.replaceScene(cannon.EndingScene(gameData.score));
             }
         });
-        this.app.pushScene(resultScene);
+        // this.app.pushScene(resultScene);
+        resultScene.addChildTo(this);
     },
 
     update: function(app) {
@@ -333,9 +349,25 @@ tm.define("cannon.GameScene", {
         boss.on("destroy", function() {
             that.player.muteki = true;
             bossBattleTimeLabel.stop();
+
+            that.webglParams.quake = 5.0;
+            that.webglParams.centerOffset = [this.x, this.y];
+            that.webglParams.tweener.clear()
+                .to({
+                    strength: 8.0,
+                }, 500)
+                .to({
+                    lightRadius: 2000,
+                }, 1800);
         });
         boss.on("removed", function() {
             that.player.muteki = true;
+            that.webglParams.tweener.clear()
+                .to({
+                    quake: 0,
+                    strength: 0,
+                    lightRadius: 0,
+                }, 1000);
             that.stageClear();
         });
 

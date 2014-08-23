@@ -3,6 +3,7 @@ tm.define("cannon.RankLabel", {
 
     _rank: 0,
     showing: 0,
+    animation: true,
 
     init: function() {
         this.superInit("0", 25);
@@ -34,8 +35,12 @@ cannon.RankLabel.prototype.accessor("rank", {
     get: function(){ return this._rank },
     set: function(v) {
         this._rank = v;
-        this.tweener.clear().to({
-            showing: this._rank
-        }, 500);
+        if (this.animation) {
+            this.tweener.clear().to({
+                showing: this._rank
+            }, 500);
+        } else {
+            this.showing = this._rank;
+        }
     }
 });

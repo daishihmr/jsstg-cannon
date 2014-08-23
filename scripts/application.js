@@ -39,7 +39,7 @@ tm.define("cannon.GameData", {
     initializeValues: function() {
         this.score = 0;
         this.zanki = 3;
-        this.rank = cannon.RANK_MAX;
+        this.rank = 0;
     }
 });
 

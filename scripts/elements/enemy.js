@@ -12,7 +12,7 @@ tm.define("cannon.Enemy", {
     /** 出現後経過フレーム */
     age: 0,
     /** 撃ち返し */
-    shotBack: false,
+    shotBack: true,
 
     init: function() {
         this.superInit();

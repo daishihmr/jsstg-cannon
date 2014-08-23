@@ -3,6 +3,7 @@ tm.define("cannon.ScoreLabel", {
 
     _score: 0,
     showing: 0,
+    animation: true,
 
     init: function() {
         this.superInit("0", 35);
@@ -34,8 +35,12 @@ cannon.ScoreLabel.prototype.accessor("score", {
     get: function(){ return this._score },
     set: function(v) {
         this._score = v;
-        this.tweener.clear().to({
-            showing: this._score
-        }, 500);
+        if (this.animation) {
+            this.tweener.clear().to({
+                showing: this._score
+            }, 500);
+        } else {
+            this.showing = this._score;
+        }
     }
 });
