@@ -15,11 +15,10 @@ tm.define("cannon.ResultScene", {
                 bg: {
                     type: "tm.display.RectangleShape",
                     init: [cannon.SC_W, cannon.SC_H, {
-                        fillStyle: "hsla(200, 20%, 20%, 0.75)",
+                        fillStyle: "black",
                         strokeStyle: "transparent",
                     }],
                     originX: 0, originY: 0,
-                    alpha: 0,
                 },
                 scoreLabel: {
                     type: "tm.display.Label",
@@ -30,9 +29,20 @@ tm.define("cannon.ResultScene", {
                     x: cannon.SC_W * 0.7,
                     y: cannon.SC_H * 0.85,
                     onenterframe: function(){ this.text = "" + Math.floor(scene.score) },
+                    alpha: 0,
+                },
+                prompt: {
+                    type: "tm.display.Label",
+                    init: ["press [z] key", 30],
+                    align: "center",
+                    baseline: "middle",
+                    x: cannon.SC_W * 0.5,
+                    y: cannon.SC_H * 0.95,
+                    alpha: 0,
                 },
                 labels: {
                     type: "tm.display.CanvasElement",
+                    alpha: 0,
                     children: {
                         title: {
                             type: "tm.display.Label",
@@ -233,19 +243,26 @@ tm.define("cannon.ResultScene", {
             },
         });
 
+        this.skip = function(e) {
+            if (e.app.keyboard.getKeyDown("z") || e.app.keyboard.getKeyDown("x")) {
+                this.tweener.skip();
+            }
+        };
+
         this.on("enterframe", function() {
             clearData.gameData.score = this.score;
         });
 
-        this.tweener
-            .call(function(){ this.bg.tweener.fadeIn(1000) }.bind(this))
-            .wait(500)
-            .call(function(){ this.show() }.bind(this));
+        this.on("enter", function(){ this.show() }.bind(this));
     },
 
     show: function() {
         var values = this.values.children;
+        this.scoreLabel.tweener.clear().fadeIn(500);
+        this.labels.tweener.clear().fadeIn(500);
         var tweener = this.tweener.clear();
+
+        tweener.wait(500);
         values.forEach(function(value) {
             tweener
                 .wait(300)
@@ -255,6 +272,8 @@ tm.define("cannon.ResultScene", {
         tweener.call(function() {
             this.startCalcScore();
         }.bind(this));
+
+        this.on("enterframe", this.skip);
     },
 
     startCalcScore: function() {
@@ -281,6 +300,16 @@ tm.define("cannon.ResultScene", {
                 score: this.score + this.bossBattleTime + this.perfectBonus + this.noMissBonus,
             }, 1000);
         }
-        this.tweener.call(function(){ scene.off("enterframe", playPi) });
+        this.tweener
+            .call(function() {
+                this.off("enterframe", this.skip);
+                scene.off("enterframe", playPi);
+                this.prompt.tweener.fadeIn(500)
+                this.on("enterframe", function(e) {
+                    if (e.app.keyboard.getKeyDown("z")) {
+                        this.flare("finish");
+                    }
+                });
+            }.bind(this));
     },
 });

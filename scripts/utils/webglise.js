@@ -126,15 +126,14 @@ tm.define("WebGLise", {
         var render = function() {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+            mat4.identity(matM);
             if (params.quake > 0.0) {
-                mat4.identity(matM);
                 mat4.translate(matM, matM, [Math.randf(-params.quake * 0.01, params.quake * 0.01), Math.randf(-params.quake * 0.01, params.quake * 0.01), 0]);
                 mat4.rotateZ(matM, matM, Math.randf(-params.quake * 0.01, params.quake * 0.01));
-                mat4.multiply(matMvp, matP, matV);
-                mat4.multiply(matMvp, matM, matMvp);
-                gl.uniformMatrix4fv(uniformLocation.matMvp, false, matMvp);
-                mat4.identity(matM);
             }
+            mat4.multiply(matMvp, matP, matV);
+            mat4.multiply(matMvp, matM, matMvp);
+            gl.uniformMatrix4fv(uniformLocation.matMvp, false, matMvp);
 
             ctex.drawImage(app.element, 0, 0, app.width, app.height, 0, 0, ctex.width, ctex.height);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, ctex.element);
@@ -224,7 +223,7 @@ void main(void) {
 
     if (320.0 - labelAreaHeight <= gl_FragCoord.y && gl_FragCoord.y < 320.0 + labelAreaHeight) {
         vec3 neg = vec3(1.0 - blured.r, 1.0 - blured.g, 1.0 - blured.b);
-        result = vec4(neg.r * 0.48, neg.g * 0.05, neg.b * 0.08, blured.a);
+        result = vec4(neg.r * 0.62, neg.g * 0.10, neg.b * 0.12, blured.a);
     } else {
         result = blured;
     }

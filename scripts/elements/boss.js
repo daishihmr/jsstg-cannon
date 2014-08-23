@@ -15,6 +15,10 @@ tm.define("cannon.Boss", {
         });
 
         this.muteki = false;
+
+        this.on("removed", function() {
+            this.parts.forEach(function(part){ part.parent && part.remove() });
+        });
     },
 
     setCore: function(core) {
@@ -22,7 +26,9 @@ tm.define("cannon.Boss", {
         this.core = core;
         this.core.on("destroy", function() {
             that.flare("destroy");
+            this.damage = function(){};
         });
+        this.core.destroy = function(){};
     },
 });
 
@@ -149,17 +155,11 @@ tm.define("cannon.Boss1", {
 
         this.on("destroy", function() {
             this.fireOff();
+            this.tweener.clear();
             var core = this.core;
             this.parts.forEach(function(part) {
                 if (part !== core && part.parent) part.destroy(false);
             });
-
-            // TODO 爆破演出
-            this.tweener.clear()
-                .wait(5000)
-                .call(function() {
-                    this.remove();
-                }.bind(this));
         });
     },
 

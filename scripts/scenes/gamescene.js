@@ -95,10 +95,6 @@ tm.define("cannon.GameScene", {
 
         var that = this;
 
-        this.on("enter", function(e) {
-            this.webglParams = e.app.webgl.params.addChildTo(this);
-        });
-
         gameData = cannon.GameData();
         gameData.on("updatescore", function() {
             that.uiLayer.scoreLabel.score = this.score;
@@ -148,7 +144,10 @@ tm.define("cannon.GameScene", {
             }.bind(this)
         };
 
-        this.stageStart();
+        this.on("enter", function(e) {
+            this.webglParams = e.app.webgl.params.addChildTo(this);
+            this.stageStart();
+        });
     },
 
     stageStart: function() {
@@ -159,6 +158,11 @@ tm.define("cannon.GameScene", {
         this.terrainLayer.removeChildren();
         this.enemyLayer.removeChildren();
         this.bulletLayer.removeChildren();
+
+        this.webglParams.quake = 0;
+        this.webglParams.labelAreaHeight = 0;
+        this.webglParams.strength = 0;
+        this.webglParams.lightRadius = 0;
 
         cannon.Enemy.ACTIVES.clear();
         cannon.Bullet.ACTIVES.clear();
@@ -196,18 +200,18 @@ tm.define("cannon.GameScene", {
             that.uiLayer.scoreLabel.animation = true;
             that.uiLayer.rankLabel.animation = true;
 
-            // this.app.popScene();
-            this.remove();
+            this.app.popScene();
+            // this.remove();
 
-            that.stageIndex += 1;
+            // that.stageIndex += 1;
             if (that.stageIndex < cannon.STAGE_COUNT) {
                 that.stageStart();
             } else {
                 that.app.replaceScene(cannon.EndingScene(gameData.score));
             }
         });
-        // this.app.pushScene(resultScene);
-        resultScene.addChildTo(this);
+        this.app.pushScene(resultScene);
+        // resultScene.addChildTo(this);
     },
 
     update: function(app) {
@@ -346,28 +350,38 @@ tm.define("cannon.GameScene", {
                 boss.addChildTo(that.enemyLayer);
             });
 
+        var lightLines = Array.range(0, 12).map(function(i) {
+            return cannon.LightLine();
+        });
         boss.on("destroy", function() {
             that.player.muteki = true;
             bossBattleTimeLabel.stop();
 
-            that.webglParams.quake = 5.0;
+            lightLines.forEach(function(lightLine) {
+                lightLine
+                    .setPosition(this.x, this.y)
+                    .addChildTo(that.enemyLayer);
+            }.bind(this));
+
+            that.webglParams.quake = 2.0;
             that.webglParams.centerOffset = [this.x, this.y];
             that.webglParams.tweener.clear()
+                .wait(3000)
                 .to({
-                    strength: 8.0,
-                }, 500)
-                .to({
-                    lightRadius: 2000,
-                }, 1800);
-        });
-        boss.on("removed", function() {
-            that.player.muteki = true;
-            that.webglParams.tweener.clear()
+                    strength: 15.0,
+                    lightRadius: 1200,
+                }, 3000, "easeOutQuad")
                 .to({
                     quake: 0,
-                    strength: 0,
-                    lightRadius: 0,
-                }, 1000);
+                }, 1500)
+                .call(function(){ this.remove() }.bind(this));
+        });
+        boss.on("removed", function() {
+            lightLines.forEach(function(lightLine){ lightLine.remove() });
+            that.player.muteki = true;
+            that.webglParams.quake = 0;
+            that.webglParams.strength = 0;
+            that.webglParams.lightRadius = 0;
             that.stageClear();
         });
 
@@ -393,7 +407,7 @@ tm.define("cannon.GameScene", {
             for (var j = 0, jlen = enemies.length; j < jlen; j++) {
                 var enemy = enemies[j];
                 if (shot.isHitElement(enemy)) {
-                    console.log(enemy.hp);
+                    // console.log(enemy.hp);
                     if (!enemy.damage(cannon.SHOT_POWER)) {
                         shot.damage();
                         break;
@@ -531,7 +545,8 @@ cannon.GameScene.createLoadingScene = function(stageIndex) {
         height: cannon.SC_H,
         assets: cannon.STAGE_DATA[stageIndex].assets,
         nextScene: function() {
-            return cannon.GameScene(stageIndex);
+            var gameScene = cannon.GameScene(stageIndex);
+            return gameScene;
         },
     });
 };
