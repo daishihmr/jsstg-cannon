@@ -25,7 +25,7 @@ cannon.HEAT_BY_SHOT = 18;
 cannon.SHOT_POWER = 3;
 cannon.SHOT_RADIUS = SC_W / 32;
 cannon.ZANKI_MAX = 10;
-cannon.RANK_MAX = 3000;
+cannon.RANK_MAX = 1000;
 cannon.RANK_DOWN_AT_KILLED = -30;
 
 cannon.optionSettings = {

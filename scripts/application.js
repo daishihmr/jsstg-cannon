@@ -21,7 +21,7 @@ tm.define("cannon.Application", {
 
         // this.canvas.imageSmoothingEnabled = false;
 
-        WebGLise(this);
+        this.webgl = WebGLise(this);
     }
 });
 
@@ -39,7 +39,7 @@ tm.define("cannon.GameData", {
     initializeValues: function() {
         this.score = 0;
         this.zanki = 3;
-        this.rank = 0;
+        this.rank = cannon.RANK_MAX;
     }
 });
 

@@ -72,9 +72,9 @@ tm.define("cannon.GameScene", {
                             children: [{
                                 type: "tm.display.Label",
                                 init: ["CAUTION!!", 96],
-                                fillStyle: "hsl(0, 100%, 50%)",
+                                fillStyle: "hsl(0, 80%, 80%)",
                                 x: cannon.SC_W * 0.5,
-                                y: cannon.SC_H * 0.5,
+                                y: cannon.SC_H * 0.5 + 10,
                                 shadowColor: "white",
                                 shadowBlur: 15,
                                 blendMode: "lighter",
@@ -94,6 +94,10 @@ tm.define("cannon.GameScene", {
         });
 
         var that = this;
+
+        this.on("enter", function(e) {
+            this.webglParams = e.app.webgl.params.addChildTo(this);
+        });
 
         gameData = cannon.GameData();
         gameData.on("updatescore", function() {
@@ -288,6 +292,7 @@ tm.define("cannon.GameScene", {
 
     launchBoss: function(step) {
         var that = this;
+        var webglParams = this.webglParams;
         var warningLabel = this.uiLayer.warningLabel;
         warningLabel.visible = true;
         warningLabel.alpha = 0;
@@ -307,10 +312,13 @@ tm.define("cannon.GameScene", {
         });
 
         this.tweener.clear()
-            .call(function(){ warningLabel.tweener.clear().fadeIn(1000) })
+            .call(function(){ webglParams.tweener.clear().to({ labelAreaHeight:60 }, 700, "easeOutBack") })
+            .wait(700)
+            .call(function(){ warningLabel.tweener.clear().to({ alpha:1 }, 1000) })
             .wait(3000)
-            .call(function(){ warningLabel.tweener.clear().fadeOut(1000) })
+            .call(function(){ warningLabel.tweener.clear().to({ alpha:0 }, 1000) })
             .wait(1000)
+            .call(function(){ webglParams.tweener.clear().to({ labelAreaHeight:0 }, 700, "easeInBack") })
             .call(function() {
                 bossBattleTimeLabel.x += 100;
                 bossBattleTimeLabel.visible = true;

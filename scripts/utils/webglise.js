@@ -4,6 +4,7 @@ tm.define("WebGLise", {
 
     init: function(app) {
         this.app = app;
+        var params = this.params = cannon.WebGLParams();
 
         app.element.style.display = "none";
 
@@ -28,7 +29,7 @@ tm.define("WebGLise", {
             var rateWidth = c3d.width/window.innerWidth;
             var rateHeight= c3d.height/window.innerHeight;
             var rate = c3d.height/c3d.width;
-            
+
             if (rateWidth > rateHeight) {
                 s.width  = innerWidth+"px";
                 s.height = innerWidth*rate+"px";
@@ -67,6 +68,7 @@ tm.define("WebGLise", {
         var uniformLocation = {
             matMvp: gl.getUniformLocation(program, "matMvp"),
             texture: gl.getUniformLocation(program, "texture"),
+            labelAreaHeight: gl.getUniformLocation(program, "labelAreaHeight"),
         };
 
         var positionData = [
@@ -121,44 +123,57 @@ tm.define("WebGLise", {
             gl.generateMipmap(gl.TEXTURE_2D);
             gl.uniform1i(uniformLocation.texture, 0);
 
+            gl.uniform1f(uniformLocation.labelAreaHeight, params.labelAreaHeight)
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
             gl.flush();
         };
-        
+
         app.update = function() {
             render();
         };
     }
 });
 
-WebGLise.vs = "\n\
-attribute vec3 position;\n\
-attribute vec2 texCoord;\n\
-uniform mat4 matMvp;\n\
-varying vec4 vColor;\n\
-varying vec2 vTexCoord;\n\
-\n\
-void main(void) {\n\
-    vTexCoord = texCoord;\n\
-    gl_Position = matMvp * vec4(position, 1.0);\n\
-}\n\
+WebGLise.vs = "
+attribute vec3 position;
+attribute vec2 texCoord;
+uniform mat4 matMvp;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+
+void main(void) {
+    vTexCoord = texCoord;
+    gl_Position = matMvp * vec4(position, 1.0);
+}
 ";
 
-WebGLise.fs = "\n\
-precision mediump float;\n\
-\n\
-uniform sampler2D texture;\n\
-varying vec4 vColor;\n\
-varying vec2 vTexCoord;\n\
-\n\
-const vec2 center = vec2(200.0, 300.0);\n\
-const float pi = 3.14159;\n\
-const float ringRadius = 100.0;\n\
-const float ringWidth = 60.0;\n\
-\n\
-void main(void) {\n\
-    gl_FragColor = texture2D(texture, vTexCoord);\n\
-}\n\
+WebGLise.fs = "
+precision mediump float;
+
+uniform sampler2D texture;
+uniform float labelAreaHeight;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+
+const float seed = 604.361;
+float rnd(){
+    return fract(sin(dot(gl_FragCoord.stp + seed, vec3(12.9898, 78.233, 151.7182))) * 43758.5453 + seed);
+}
+
+void main(void) {
+    vec4 result;
+    vec4 sample = texture2D(texture, vTexCoord);
+
+    if (320.0 - labelAreaHeight <= gl_FragCoord.y && gl_FragCoord.y < 320.0 + labelAreaHeight) {
+        vec3 neg = vec3(sample.r, 1.0 - sample.g, 1.0 - sample.b);
+        result = vec4(neg.r * 0.48, neg.g * 0.05, neg.b * 0.08, sample.a);
+    } else {
+        result = sample;
+    }
+
+    gl_FragColor = result;
+}
 ";
 
 })();
