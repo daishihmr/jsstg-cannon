@@ -10,7 +10,7 @@ tm.define("cannon.Shot", {
         this.setScale(5.0 * this.direction, 5.0);
 
         this.boundingType = "circle";
-        this.radius = cannon.SHOT_RADIUS;
+        this.radius = cannon.SHOT_RADIUS * 3.0;
         this.vsTerrainRadius = cannon.SHOT_RADIUS * 0.25;
 
         var that = this;
@@ -30,6 +30,14 @@ tm.define("cannon.Shot", {
                 .addChildTo(this.parent);
         });
 
+        var age = 0;
+        this.on("enterframe", function() {
+            if (age > 6) {
+                this.radius = cannon.SHOT_RADIUS;
+                this.off("enterframe", arguments.callee);
+            }
+            age += 1;
+        });
         this.on("added", function() {
             cannon.Shot.ACTIVES.push(this);
         });
