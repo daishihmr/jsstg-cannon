@@ -29,8 +29,8 @@ cannon.RANK_MAX = 1000;
 cannon.RANK_DOWN_AT_KILLED = -30;
 
 cannon.optionSettings = {
-    seVolume: 0.1,
-    bgmVolume: 0.5,
+    seVolume: 0.2,
+    bgmVolume: 0.2,
 };
 
 tm.display.Label.default.fontFamily = "Orbitron";

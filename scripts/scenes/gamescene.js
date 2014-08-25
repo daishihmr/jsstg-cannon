@@ -153,6 +153,7 @@ tm.define("cannon.GameScene", {
     stageStart: function() {
         this.uiLayer.scoreLabel.clearAnimation();
         this.uiLayer.rankLabel.clearAnimation();
+        this.uiLayer.bossBattleTimeLabel.visible = false;
 
         this.backgroundLayer.removeChildren();
         this.terrainLayer.removeChildren();
@@ -182,6 +183,8 @@ tm.define("cannon.GameScene", {
         this.waitCount = 0;
 
         this.launchPlayer();
+
+        cannon.playBgm("bgm", cannon.STAGE_DATA[this.stageIndex].bgmLoopRange);
     },
 
     stageClear: function() {
@@ -363,12 +366,12 @@ tm.define("cannon.GameScene", {
                     .addChildTo(that.enemyLayer);
             }.bind(this));
 
-            that.webglParams.quake = 2.0;
             that.webglParams.centerOffset = [this.x, this.y];
             that.webglParams.tweener.clear()
                 .wait(3000)
+                .call(function(){ that.webglParams.quake = 2.0 })
                 .to({
-                    strength: 15.0,
+                    strength: 20.0,
                     lightRadius: 1200,
                 }, 3000, "easeOutQuad")
                 .to({
