@@ -202,23 +202,23 @@ tm.define("cannon.Boss1", {
                     x: gunPos.x,
                     y: gunPos.y,
                     direction: 0,
-                    speed: 2,
+                    speed: 3,
                 }).addChildTo(scene.bulletLayer);
                 cannon.AimBullet({
                     color: 2,
                     target: scene.player,
                     x: gunPos.x,
                     y: gunPos.y,
-                    direction: -30,
-                    speed: 2,
+                    direction: -10,
+                    speed: 3,
                 }).addChildTo(scene.bulletLayer);
                 cannon.AimBullet({
                     color: 2,
                     target: scene.player,
                     x: gunPos.x,
                     y: gunPos.y,
-                    direction: +30,
-                    speed: 2,
+                    direction: +10,
+                    speed: 3,
                 }).addChildTo(scene.bulletLayer);
             }
         });
@@ -234,9 +234,39 @@ tm.define("cannon.Boss1", {
                 x: this.x,
                 y: this.y,
                 direction: i,
-                speed: 2,
+                speed: 3,
             }).addChildTo(scene.bulletLayer);
         }
+    },
+
+    fireOn: function() {
+        var scene = this.getRoot();
+        this.autoFire = this.autoFire || function(e) {
+            if (e.app.frame % 5 === 0) {
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation - 5,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+                cannon.DirectionalBullet({
+                    x: this.x,
+                    y: this.y,
+                    direction: this.rotation + 5,
+                    speed: 2,
+                }).addChildTo(scene.bulletLayer);
+            }
+        };
+        this.on("enterframe", this.autoFire);
+    },
+    fireOff: function() {
+        this.off("enterframe", this.autoFire);
     },
 
     motionDamage: function(part) {
@@ -394,36 +424,6 @@ tm.define("cannon.Boss1", {
             .call(function(){ this.attack0() }.bind(this)).wait(300)
 
             .call(function(){ this.next() }.bind(this));
-    },
-
-    fireOn: function() {
-        var scene = this.getRoot();
-        this.autoFire = this.autoFire || function(e) {
-            if (e.app.frame % 5 === 0) {
-                cannon.DirectionalBullet({
-                    x: this.x,
-                    y: this.y,
-                    direction: this.rotation - 5,
-                    speed: 2,
-                }).addChildTo(scene.bulletLayer);
-                cannon.DirectionalBullet({
-                    x: this.x,
-                    y: this.y,
-                    direction: this.rotation,
-                    speed: 2,
-                }).addChildTo(scene.bulletLayer);
-                cannon.DirectionalBullet({
-                    x: this.x,
-                    y: this.y,
-                    direction: this.rotation + 5,
-                    speed: 2,
-                }).addChildTo(scene.bulletLayer);
-            }
-        };
-        this.on("enterframe", this.autoFire);
-    },
-    fireOff: function() {
-        this.off("enterframe", this.autoFire);
     },
 
     motion4: function() {

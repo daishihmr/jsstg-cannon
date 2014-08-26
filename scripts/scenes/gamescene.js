@@ -176,15 +176,16 @@ tm.define("cannon.GameScene", {
 
         this.mt = new MersenneTwister(1000 + this.stageIndex);
 
-        cannon.Background(cannon.STAGE_DATA[this.stageIndex].background).addChildTo(this.backgroundLayer);
-        cannon.Terrain(cannon.STAGE_DATA[this.stageIndex].terrain).addChildTo(this.terrainLayer);
-        this.scrollSpeed = cannon.STAGE_DATA[this.stageIndex].scrollSpeed;
-        this.stageStep = cannon.STAGE_DATA[this.stageIndex].stageStep.clone();
+        var stageData = cannon.STAGE_DATA[this.stageIndex];
+        cannon.Background(stageData.background).addChildTo(this.backgroundLayer);
+        cannon.Terrain(stageData.terrain).addChildTo(this.terrainLayer);
+        this.scrollSpeed = stageData.scrollSpeed;
+        this.stageStep = stageData.stageStep.clone();
         this.waitCount = 0;
 
         this.launchPlayer();
 
-        cannon.playBgm("bgm", cannon.STAGE_DATA[this.stageIndex].bgmLoopRange);
+        cannon.playBgm(stageData.bgm, stageData.bgmLoopRange);
     },
 
     stageClear: function() {

@@ -136,8 +136,9 @@ cannon.STAGE_DATA[0] = {
     assets: {
         "terrain/stage1": "images/terrainStage1.png",
         "background/stage1": "images/backgroundStage1.png",
-        "sounds/bgm": "sounds/nc67883.mp3",
+        "bgm/stage1": "sounds/nc67883.mp3",
     },
+    bgm: "bgm/stage1",
     bgmLoopRange: [14.142, 151.285],
     background: {
         texture: "background/stage1",

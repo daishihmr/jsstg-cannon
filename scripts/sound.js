@@ -7,9 +7,9 @@ cannon.playSe = function(soundName) {
 };
 
 cannon.bgm = null;
-cannon.playBgm = function(soundName, loopRange) {
+cannon.playBgm = function(bgm, loopRange) {
     if (cannon.bgm) cannon.bgm.stop();
-    cannon.bgm = tm.asset.Manager.get("sounds/" + soundName).clone();
+    cannon.bgm = tm.asset.Manager.get(bgm).clone();
     cannon.bgm
         .setVolume(cannon.optionSettings.bgmVolume)
         .setLoop(true)
