@@ -5,7 +5,7 @@
 <style>
 body {
     background-color: black;
-    color: white;
+    color: rgba(255,255,255,0.5);
 }
 
 .ranking {
@@ -48,7 +48,7 @@ body {
 </head>
 <body style="background:black">
 
-<div style="float:left">
+<div style="float:left;margin-right:20px">
     <iframe id="gf" src="main.html" style="width:640px;height:640px;background:#333;border:1px solid #333" scrolling="no" onload="this.contentWindow.focus()"></iframe>
     <div style="width:640px">
         <div style="text-align:center">
@@ -57,11 +57,33 @@ body {
     </div>
 </div>
 
-<div style="float:left">
+<div style="float:left;margin-right:20px">
     <ul id="top10" class="ranking"></ul>
     <div style="height:30px"></div>
     <ul id="myposition" class="ranking"></ul>
     <div class="input-form">USER NAME:<input id="name" type="text"></div>
+</div>
+
+<div style="float:left;margin-right:20px">
+<h2>操作方法</h2>
+<ul>
+    <li style="margin-bottom:10px">
+        <div><strong>カーソルキー</strong></div>
+        <div style="margin-left:20px"><span>移動</span></div>
+    </li>
+    <li style="margin-bottom:10px">
+        <div><strong>Zキー</strong></div>
+        <div style="margin-left:20px"><span>左へショット発射</span></div>
+    </li>
+    <li style="margin-bottom:10px">
+        <div><strong>Xキー</strong></div>
+        <div style="margin-left:20px"><span>右へショット発射</span></div>
+    </li>
+    <li style="margin-bottom:10px">
+        <div><strong>スペースキー</strong></div>
+        <div style="margin-left:20px"><span>ポーズ／ポーズ解除</span></div>
+    </li>
+</ul>
 </div>
 
 <div style="clear:both"></div>

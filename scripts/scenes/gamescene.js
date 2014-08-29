@@ -145,7 +145,11 @@ tm.define("cannon.GameScene", {
         };
 
         this.on("enter", function(e) {
-            this.webglParams = e.app.webgl.params.addChildTo(this);
+            if (e.app.webgl) {
+                this.webglParams = e.app.webgl.params.addChildTo(this);
+            } else {
+                this.webglParams = cannon.WebGLParams();
+            }
             this.stageStart();
         });
 
