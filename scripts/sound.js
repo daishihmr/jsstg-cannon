@@ -20,4 +20,8 @@ cannon.playBgm = function(bgm, loopRange) {
     }
 };
 
+cannon.stopBgm = function() {
+    if (cannon.bgm) cannon.bgm.stop();
+};
+
 })();
