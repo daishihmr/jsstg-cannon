@@ -13331,20 +13331,20 @@ tm.app = tm.app || {};
             var tweens = this.tweens.clone();
             for (var i=0,len=tweens.length; i<len; ++i) {
                 var tween = tweens[i];
-
+                
                 // 待ちチェック
                 if (tween.delay > 0) {
                     tween.delay -= 1000/app.fps;
                     continue;
                 }
-
+                
                 var time = tween.time + 1000/app.fps;
                 tween._setTime(time);
-
+                
                 if (tween.time >= tween.duration) {
                     // 削除
                     this.tweens.erase(tween);
-
+                    
                     // 全てのアニメーション終了チェック
                     if (this.tweens.length <= 0) {
                         this.isAnimation = false;
@@ -13420,7 +13420,7 @@ tm.app = tm.app || {};
             var tween = this._tween;
             var time = tween.time + 1000/app.fps;
             tween._setTime(time);
-
+            
             if (tween.time >= tween.duration) {
                 // 削除
                 delete this._tween;
@@ -13466,7 +13466,7 @@ tm.app = tm.app || {};
                 var e = tm.event.Event("animationstart");
                 this.element.dispatchEvent(e);
             }
-
+            
             return this;
         },
 
@@ -13604,7 +13604,7 @@ tm.app = tm.app || {};
                 var e = tm.event.Event("animationstart");
                 this.element.dispatchEvent(e);
             }
-
+            
             return this;
         },
 
@@ -13717,7 +13717,7 @@ tm.app = tm.app || {};
         },
 
         /**
-         * 現在のタスクをスキップ
+         * アニメーションをスキップ
          */
         skip: function() {
             if (this._func === this._updateTween) {
@@ -13726,6 +13726,7 @@ tm.app = tm.app || {};
             } else if (this._func === this._updateWait) {
                 this._func = this._updateTask;
             }
+            return this;
         },
     });
 
@@ -13741,7 +13742,7 @@ tm.app = tm.app || {};
                 this._tweener.update(e.app);
             });
         }
-
+        
         return this._tweener;
     });
 })();

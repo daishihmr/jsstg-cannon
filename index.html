@@ -2,27 +2,84 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<style>
+body {
+    background-color: black;
+    color: white;
+}
+
+.ranking {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ranking .myscore {
+    font-weight: bold;
+    color: red;
+}
+
+.ranking .rank {
+    text-align: right;
+    width: 80px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.ranking .name {
+    margin-left: 10px;
+    width: 80px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.ranking .score {
+    text-align: right;
+    width: 80px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.input-form {
+    margin-left: 10px;
+    margin-top: 20px;
+}
+</style>
 </head>
 <body style="background:black">
 
-<iframe id="gf" src="main.html" style="width:640px;height:640px;background:#333;border:1px solid #333" scrolling="no" onload="this.contentWindow.focus()"></iframe>
-<div style="width:640px">
-    <div style="text-align:center">
-        <a id="fs" href="javascript:void(0)">Full Screen</a>
+<div style="float:left">
+    <iframe id="gf" src="main.html" style="width:640px;height:640px;background:#333;border:1px solid #333" scrolling="no" onload="this.contentWindow.focus()"></iframe>
+    <div style="width:640px">
+        <div style="text-align:center">
+            <a id="fs" href="javascript:void(0)">Full Screen</a>
+        </div>
     </div>
 </div>
 
+<div style="float:left">
+    <ul id="top10" class="ranking"></ul>
+    <div style="height:30px"></div>
+    <ul id="myposition" class="ranking"></ul>
+    <div class="input-form">USER NAME:<input id="name" type="text"></div>
+</div>
+
+<div style="clear:both"></div>
+
 <div style="height:4000px"></div>
 
+<div id="e">entry</div>
+
 <script>
-window.onload = function() {
-    var gf = document.getElementById("gf");
-    document.addEventListener("click", function() {
-        gf.contentWindow.focus();
-        setTimeout(function() {
-            gf.contentWindow.focus();
-        }, 500);
-    }, false);
+window.addEventListener("load", function() {
+
+    // var gf = document.getElementById("gf");
+    // document.addEventListener("click", function() {
+    //     gf.contentWindow.focus();
+    //     setTimeout(function() {
+    //         gf.contentWindow.focus();
+    //     }, 500);
+    // }, false);
 
     var fs = document.getElementById("fs");
     fs.addEventListener("click", function() {
@@ -31,7 +88,98 @@ window.onload = function() {
         else if (gf.mozRequestFullScreen) gf.mozRequestFullScreen();
         else if (gf.msRequestFullScreen) gf.msRequestFullScreen();
     }, false);
+
+}, false);
+</script>
+
+<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script>
+var GAME_ID = 999;
+var socket;
+
+var getList = function() {
+    socket.emit("getList", GAME_ID);
 };
+
+document.getElementById("name").onchange = getList;
+
+window.addEventListener("load", function() {
+    socket = io.connect("http://localhost:3000");
+
+    socket.on("update", function(_list) {
+        var list = JSON.parse(_list);
+
+        var top10 = document.getElementById("top10");
+        top10.innerHTML = "";
+        list
+            .filter(function(_, i){ return i < 10 })
+            .forEach(function(score, i) {
+                var li = document.createElement("li");
+                li.innerHTML
+                    = "<div class='rank'>" + (i + 1) + "</div>"
+                    + "<div class='name'>" + score.name + "</div>"
+                    + "<div class='score'>" + score.score + "</div>";
+                top10.appendChild(li);
+            });
+
+        var name = document.getElementById("name").value;
+        if (!name) return;
+
+        var myposition = document.getElementById("myposition");
+        myposition.innerHTML = "";
+
+        var min = list.length - 10;
+        var max = list.length;
+
+        for (var i = 0, len = list.length; i < len; i++) {
+            if (list[i].name === name) {
+                min = Math.min(Math.max(0, i - 5), len - 10);
+                max = min + 10;
+                break;
+            }
+        }
+
+        list
+            .forEach(function(score, i) {
+                var inRange = min <= i && i < max;
+
+                if (inRange) {
+                    var li = document.createElement("li");
+                    if (score.name === name) {
+                        li.setAttribute("class", "myscore");
+                    }
+                    li.innerHTML
+                        = "<div class='rank'>" + (i + 1) + "</div>"
+                        + "<div class='name'>" + score.name + "</div>"
+                        + "<div class='score'>" + score.score + "</div>";
+                    myposition.appendChild(li);
+                }
+            });
+    });
+
+    getList();
+}, false);
+
+var theiwoge = null;
+(function() {
+    var entry = function(score) {
+        console.log("entry " + score);
+
+        if (!score) return;
+
+        var name = document.getElementById("name").value;
+        if (!name) return;
+
+        socket.emit("entry", JSON.stringify({
+            gameId: GAME_ID,
+            name: name,
+            score: score,
+        }));
+    };
+
+    theiwoge = entry;
+})();
+
 </script>
 
 </body>

@@ -148,6 +148,14 @@ tm.define("cannon.GameScene", {
             this.webglParams = e.app.webgl.params.addChildTo(this);
             this.stageStart();
         });
+
+        this.on("enterframe", function(e) {
+            if (e.app.frame % (60 * 5) === 0) {
+                window.parent.theiwoge && window.parent.theiwoge(gameData.score);
+            }
+        });
+
+        console.log(window.parent);
     },
 
     stageStart: function() {
