@@ -92,7 +92,7 @@ window.addEventListener("load", function() {
 }, false);
 </script>
 
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
+<script src="http://highscore.dev7.jp/socket.io/socket.io.js"></script>
 <script>
 var GAME_ID = 999;
 var socket;
@@ -104,7 +104,7 @@ var getList = function() {
 document.getElementById("name").onchange = getList;
 
 window.addEventListener("load", function() {
-    socket = io.connect("http://localhost:3000");
+    socket = io.connect("http://highscore.dev7.jp");
 
     socket.on("update", function(_list) {
         var list = JSON.parse(_list);
@@ -160,7 +160,7 @@ window.addEventListener("load", function() {
     getList();
 }, false);
 
-var theiwoge = null;
+var gheaiwpghe45642313 = null;
 (function() {
     var entry = function(score) {
         console.log("entry " + score);
@@ -177,7 +177,7 @@ var theiwoge = null;
         }));
     };
 
-    theiwoge = entry;
+    gheaiwpghe45642313 = entry;
 })();
 
 </script>
