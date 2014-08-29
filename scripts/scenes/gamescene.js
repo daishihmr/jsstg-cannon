@@ -154,8 +154,6 @@ tm.define("cannon.GameScene", {
                 window.parent.theiwoge && window.parent.theiwoge(gameData.score);
             }
         });
-
-        console.log(window.parent);
     },
 
     stageStart: function() {
@@ -214,6 +212,8 @@ tm.define("cannon.GameScene", {
 
             this.app.popScene();
             // this.remove();
+
+            cannon.stopBgm();
 
             // that.stageIndex += 1;
             if (that.stageIndex < cannon.STAGE_COUNT) {
@@ -546,6 +546,7 @@ tm.define("cannon.GameScene", {
                 visible: false,
             })
             .call(function() {
+                cannon.stopBgm();
                 cannon.app.replaceScene(cannon.TitleScene());
             });
     },
