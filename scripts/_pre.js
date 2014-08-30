@@ -29,8 +29,9 @@ cannon.RANK_MAX = 1000;
 cannon.RANK_DOWN_AT_KILLED = -30;
 
 cannon.optionSettings = {
-    seVolume: 0.2,
-    bgmVolume: 0.2,
+    seVolume: 2,
+    bgmVolume: 2,
+    webgl: true,
 };
 
 tm.display.Label.default.fontFamily = "Orbitron";
@@ -61,7 +62,7 @@ cannon.ASSETS = {
     "sounds/shot": "sounds/gun2.mp3",
     "sounds/explode0": "sounds/sen_ge_taihou03.mp3",
     "sounds/explode1": "sounds/sen_ge_bom14.mp3",
-    "sounds/pi": "sounds/se_maoudamashii_system26.mp3",
+    "sounds/pi": "sounds/se_maoudamashii_system26.mp3", // TODO 再エンコ
 };
 Array.range(0, 14 + 1).forEach(function(i) {
     cannon.ASSETS["enemy{0}".format(i)] = "images/enemy{0}.png".format(i);

@@ -202,7 +202,7 @@ tm.define("cannon.Boss1", {
                     x: gunPos.x,
                     y: gunPos.y,
                     direction: 0,
-                    speed: 3,
+                    speed: 2.5,
                 }).addChildTo(scene.bulletLayer);
                 cannon.AimBullet({
                     color: 2,
@@ -210,7 +210,7 @@ tm.define("cannon.Boss1", {
                     x: gunPos.x,
                     y: gunPos.y,
                     direction: -10,
-                    speed: 3,
+                    speed: 2.5,
                 }).addChildTo(scene.bulletLayer);
                 cannon.AimBullet({
                     color: 2,
@@ -218,7 +218,7 @@ tm.define("cannon.Boss1", {
                     x: gunPos.x,
                     y: gunPos.y,
                     direction: +10,
-                    speed: 3,
+                    speed: 2.5,
                 }).addChildTo(scene.bulletLayer);
             }
         });
@@ -234,7 +234,7 @@ tm.define("cannon.Boss1", {
                 x: this.x,
                 y: this.y,
                 direction: i,
-                speed: 3,
+                speed: 2.5,
             }).addChildTo(scene.bulletLayer);
         }
     },

@@ -369,6 +369,7 @@ tm.define("cannon.GameScene", {
         var lightLines = Array.range(0, 12).map(function(i) {
             return cannon.LightLine();
         });
+        var bossExplosion = cannon.BossExplode(0, 0);
         boss.on("destroy", function() {
             that.player.muteki = true;
             bossBattleTimeLabel.stop();
@@ -383,9 +384,10 @@ tm.define("cannon.GameScene", {
             that.webglParams.tweener.clear()
                 .wait(3000)
                 .call(function(){ that.webglParams.quake = 2.0 })
+                .call(function(){ bossExplosion.setPosition(this.x, this.y).addChildTo(that.enemyLayer) }.bind(this))
                 .to({
                     strength: 20.0,
-                    lightRadius: 1200,
+                    // lightRadius: 1200,
                 }, 3000, "easeOutQuad")
                 .to({
                     quake: 0,
@@ -394,6 +396,7 @@ tm.define("cannon.GameScene", {
         });
         boss.on("removed", function() {
             lightLines.forEach(function(lightLine){ lightLine.remove() });
+            if (bossExplosion.parent) bossExplosion.remove();
             that.player.muteki = true;
             that.webglParams.quake = 0;
             that.webglParams.strength = 0;

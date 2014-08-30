@@ -2,7 +2,7 @@
 
 cannon.playSe = function(soundName) {
     tm.asset.Manager.get("sounds/" + soundName).clone()
-        .setVolume(cannon.optionSettings.seVolume)
+        .setVolume(cannon.optionSettings.seVolume / (8 - 1))
         .play();
 };
 
@@ -11,7 +11,7 @@ cannon.playBgm = function(bgm, loopRange) {
     if (cannon.bgm) cannon.bgm.stop();
     cannon.bgm = tm.asset.Manager.get(bgm).clone();
     cannon.bgm
-        .setVolume(cannon.optionSettings.bgmVolume)
+        .setVolume(cannon.optionSettings.bgmVolume / (8 - 1))
         .setLoop(true)
         .play();
     if (loopRange) {

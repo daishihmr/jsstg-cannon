@@ -9,13 +9,11 @@ tm.define("WebGLise", {
         this.app = app;
         var params = this.params = cannon.WebGLParams();
 
-        app.element.style.display = "none";
-
         var ctex = tm.graphics.Canvas();
-        ctex.element.style.display = "none";
+        ctex.element.style.visibility = "hidden";
         ctex.resize(512, 512);
 
-        var c3d = document.createElement("canvas");
+        var c3d = this.glCanvas = document.createElement("canvas");
         document.body.appendChild(c3d);
         c3d.width = app.width;
         c3d.height = app.height;
@@ -123,13 +121,15 @@ tm.define("WebGLise", {
         mat4.multiply(matMvp, matM, matMvp);
         gl.uniformMatrix4fv(uniformLocation.matMvp, false, matMvp);
 
-        var render = function() {
+        this.render = function() {
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
             mat4.identity(matM);
             if (params.quake > 0.0) {
                 mat4.translate(matM, matM, [Math.randf(-params.quake * 0.01, params.quake * 0.01), Math.randf(-params.quake * 0.01, params.quake * 0.01), 0]);
                 mat4.rotateZ(matM, matM, Math.randf(-params.quake * 0.01, params.quake * 0.01));
+                var s = Math.randf(1.0, 1.0 + params.quake * 0.02);
+                mat4.scale(matM, matM, [s, s, s]);
             }
             mat4.multiply(matMvp, matP, matV);
             mat4.multiply(matMvp, matM, matMvp);
@@ -151,10 +151,20 @@ tm.define("WebGLise", {
             gl.flush();
         };
 
-        app.update = function() {
-            render();
-        };
-    }
+        this.setEnable(cannon.optionSettings.webgl);
+    },
+
+    setEnable: function(enable) {
+        if (enable) {
+            this.app.update = function(){ this.render() }.bind(this);
+            this.app.element.style.visibility = "hidden";
+            this.glCanvas.style.visibility = "visible";
+        } else {
+            this.app.update = null;
+            this.app.element.style.visibility = "visible";
+            this.glCanvas.style.visibility = "hidden";
+        }
+    },
 });
 
 WebGLise.vs = "
@@ -215,15 +225,9 @@ void main(void) {
         blured = texture2D(texture, vTexCoord);
     }
 
-    if (lightRadius > 0.001) {
-        float addition = clamp((lightRadius - length(fcc)) / lightRadius, 0.0, 1.0);
-        blured += vec4(vec3(addition), 0.0);
-        blured += vec4(vec3(addition), 0.0);
-    }
-
     if (320.0 - labelAreaHeight <= gl_FragCoord.y && gl_FragCoord.y < 320.0 + labelAreaHeight) {
         vec3 neg = vec3(1.0 - blured.r, 1.0 - blured.g, 1.0 - blured.b);
-        result = vec4(neg.r * 0.62, neg.g * 0.10, neg.b * 0.12, blured.a);
+        result = vec4(neg.r * 0.62, neg.g * 0.18, neg.b * 0.24, blured.a);
     } else {
         result = blured;
     }
