@@ -1,4 +1,7 @@
 tm.main(function() {
+    if (localStorage.getItem("cannon.setting")) {
+        cannon.optionSettings = {}.$extend(cannon.optionSettings, JSON.parse(localStorage.getItem("cannon.setting")));
+    }
 
     cannon.app = cannon.Application("#main");
 

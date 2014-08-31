@@ -81,13 +81,23 @@ tm.define("cannon.TitleScene", {
         }
     },
 
+    beforeSelected: 0,
     openMenu: function() {
-        var that = this;
+        var scene = this;
         cannon.app.pushScene(
-            cannon.MenuDialog("MENU", ["game start", "option"], ["ゲームスタート","設定"]).on("closed", function(e) {
+            cannon.MenuDialog("MENU", ["game start", "option"], ["ゲームスタート","設定"], scene.beforeSelected).on("closed", function(e) {
+                scene.beforeSelected = e.index;
                 switch (e.value) {
                 case "game start":
-                    that.startGame();
+                    scene.startGame();
+                    break;
+                case "option":
+                    var optionScene = cannon.OptionScene();
+                    cannon.app.pushScene(optionScene);
+                    optionScene.openRootMenu();
+                    optionScene.onexit = function() {
+                        scene.openMenu();
+                    };
                     break;
                 }
             })

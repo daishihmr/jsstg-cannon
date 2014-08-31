@@ -7,7 +7,7 @@ tm.define("cannon.MenuDialog", {
             menu: menu,
             menuDesctiptions: descriptions,
             defaultIndex: defaultIndex || 0,
-            showExit: true,
+            showExit: showExit === undefined ? true : showExit,
             width: cannon.SC_W,
             height: cannon.SC_H,
             backgroundColor: "hsla(200, 80%, 5%, 0.6)",
