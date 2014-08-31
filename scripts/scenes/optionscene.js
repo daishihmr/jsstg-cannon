@@ -14,7 +14,7 @@ tm.define("cannon.OptionScene", {
         cannon.app.pushScene(
             cannon.MenuDialog("OPTION", ["BGM volume", "SE volume", "WebGL"], ["BGM音量を設定します","SE音量を設定します", "WebGLエフェクトのON/OFFを切り替えます"], scene.beforeSelected)
                 .on("closed", function(e) {
-                    scene.beforeSelected = e.index;
+                    scene.beforeSelected = e.index === -1 ? 0 : e.index;
                     switch (e.value) {
                     case "BGM volume":
                     case "SE volume":
