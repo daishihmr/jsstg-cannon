@@ -251,7 +251,10 @@ tm.define("cannon.GameScene", {
         this.testCollision();
 
         if (app.keyboard.getKeyDown("space")) {
-            this.app.pushScene(cannon.PauseScene());
+            // this.app.pushScene(cannon.PauseScene());
+            var o = cannon.OptionScene();
+            this.app.pushScene(o);
+            o.openRootMenu();
         }
     },
 

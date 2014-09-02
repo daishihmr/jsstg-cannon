@@ -86,7 +86,7 @@ tm.define("cannon.TitleScene", {
         var scene = this;
         cannon.app.pushScene(
             cannon.MenuDialog("MENU", ["game start", "option"], ["ゲームスタート","設定"], scene.beforeSelected).on("closed", function(e) {
-                scene.beforeSelected = e.index;
+                scene.beforeSelected = e.index === -1 ? 0 : e.index;
                 switch (e.value) {
                 case "game start":
                     scene.startGame();
