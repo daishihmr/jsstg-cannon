@@ -154,8 +154,8 @@ tm.define("cannon.GameScene", {
         });
 
         this.on("enterframe", function(e) {
-            if (e.app.frame % (60 * 1) === 0) {
-                window.parent.gheaiwpghe45642313 && window.parent.gheaiwpghe45642313(gameData.score);
+            if (e.app.frame % (60 * 5) === 0) {
+                window.parent.entry && window.parent.entry(gameData.score);
             }
         });
     },
