@@ -155,7 +155,7 @@ tm.define("cannon.GameScene", {
 
         this.on("enterframe", function(e) {
             if (e.app.frame % (60 * 5) === 0) {
-                window.parent.theiwoge && window.parent.theiwoge(gameData.score);
+                window.parent.entry && window.parent.entry(gameData.score);
             }
         });
     },
