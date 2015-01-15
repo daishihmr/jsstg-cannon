@@ -2,7 +2,14 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+
 <link rel="stylesheet" type="text/css" href="http://highscore.dev7.jp/highscore.css">
+<script src="http://highscore.dev7.jp/socket.io/socket.io.js"></script>
+<script src="http://highscore.dev7.jp/highscore.js?gameId=1"></script>
+<script>
+window.entry = window.dev7.highscore.entry;
+</script>
+
 <style>
 #highscore { color: white }
 #highscore .ranking .myscore { color: red }
@@ -47,15 +54,6 @@
 
 <script>
 window.addEventListener("load", function() {
-
-    // var gf = document.getElementById("gf");
-    // document.addEventListener("click", function() {
-    //     gf.contentWindow.focus();
-    //     setTimeout(function() {
-    //         gf.contentWindow.focus();
-    //     }, 500);
-    // }, false);
-
     var fs = document.getElementById("fs");
     fs.addEventListener("click", function() {
         if (gf.requestFullScreen) gf.requestFullScreen();
@@ -66,9 +64,6 @@ window.addEventListener("load", function() {
 
 }, false);
 </script>
-
-<script src="http://highscore.dev7.jp/socket.io/socket.io.js"></script>
-<script src="http://highscore.dev7.jp/highscore.js?gameId=1"></script>
 
 </body>
 </html>
